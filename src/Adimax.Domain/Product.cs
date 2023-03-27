@@ -28,18 +28,15 @@ namespace Adimax.Domain
         /// <summary>
         /// Gets or Sets do preço.
         /// </summary>
-        public string Price { get; set; }
+        public decimal Price { get; set; }
 
         /// <summary>
         /// Gets or Sets do objeto da categoria.
         /// </summary>
         ///[SwggerIgnore]
-        public ICollection<Category> CategoryObject { get; set; }
+        public ICollection<Category> Categories { get; set; }
 
-        /// <summary>
-        /// Gets or Sets de categoria.
-        /// </summary>
-        public string Category { get; set; }
+        public List<CategoryName> CategoryName { get; set; }
 
         /// <summary>
         /// Gets or Sets da data de criação.

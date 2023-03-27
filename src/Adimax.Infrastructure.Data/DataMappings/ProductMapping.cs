@@ -14,7 +14,7 @@ namespace Adimax.Infrastructure.Data.DataMappings
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.ToTable("PRODUTO")
-                .HasMany(c => c.Categorys)
+                .HasMany(c => c.Categories)
                 .WithMany(p => p.Products)
                 .UsingEntity(Rel => Rel.ToTable("PRODUTO_CATEGORIA"));
 
@@ -45,7 +45,7 @@ namespace Adimax.Infrastructure.Data.DataMappings
 
             builder.Property(prop => prop.HasPendingLogUpdate)
                 .HasColumnName("HasPendingLogUpdate")
-                .HasColumnType("int")
+                .HasColumnType("varchar")
                 .HasMaxLength(20);
         }
     }

@@ -26,8 +26,8 @@ namespace Adimax.Infrastructure.Data
         // Referencia DataMappings
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=new_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False");
-            //optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=master;trusted_Connection=true;TrustServerCertificate=True;Encrypt=False", b => b.MigrationsAssembly("Adimax.Infrastructure.Data"));
+            // Conexao casa --> optionsBuilder.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=new_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False");
+            optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=ADIMAX_API;trusted_Connection=true;TrustServerCertificate=True;Encrypt=False", b => b.MigrationsAssembly("Adimax.Infrastructure.Data"));
         }
     }
 }
