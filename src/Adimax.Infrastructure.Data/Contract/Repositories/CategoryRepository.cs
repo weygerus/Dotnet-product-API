@@ -36,9 +36,21 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
 
         public async Task<Category> GetById(int Id, CancellationToken cancellationToken)
         {
-            var category = await _dbContext.Categories.FindAsync(Id);
+            return await _dbContext.Categories.FindAsync(Id);
 
-            return category;
+            //var categoryWithProducts = await _dbContext.Categories.Include(c => c.ProductCategories)
+            //                                                      .ThenInclude(pc => pc.ProductIn);
+                                                                
+            //return category.Select(c => new
+            //{
+            //    c.Id,
+            //    c.Name,
+            //    c.Description,
+            //    c.Products = c.ProductCategories.Select(c => c.ProductIn.Name),
+            //    c.CreatedAt,
+            //    c.UpdateAt 
+            //});
+           
         }
 
         // -->Metodos ALTERACAO
