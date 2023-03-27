@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adimax.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230327125228_initial")]
-    partial class initial
+    [Migration("20230327183514_ajust")]
+    partial class ajust
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,9 @@ namespace Adimax.Infrastructure.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasMaxLength(100)
+                        .HasColumnType("datetime")
+                        .HasColumnName("CREATED_AT");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -45,10 +47,14 @@ namespace Adimax.Infrastructure.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar")
+                        .HasColumnName("Name");
 
                     b.Property<DateTime>("UpdateAt")
-                        .HasColumnType("datetime2");
+                        .HasMaxLength(100)
+                        .HasColumnType("datetime")
+                        .HasColumnName("UPDATE_AT");
 
                     b.HasKey("Id");
 
@@ -97,66 +103,77 @@ namespace Adimax.Infrastructure.Data.Migrations
                     b.ToTable("PRODUTO", (string)null);
                 });
 
+            modelBuilder.Entity("Adimax.Domain.ProductCategory", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasMaxLength(100)
+                        .HasColumnType("int")
+                        .HasColumnName("PRODUCT_ID");
+
+                    b.Property<int>("CategoryId")
+                        .HasMaxLength(100)
+                        .HasColumnType("int")
+                        .HasColumnName("CATEGORY_ID");
+
+                    b.HasKey("ProductId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("PRODUCT_CATEGORY", (string)null);
+                });
+
             modelBuilder.Entity("Adimax.Domain.ProductLog", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
 
                     b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                        .HasMaxLength(10)
+                        .HasColumnType("int")
+                        .HasColumnName("PRODUCT_ID");
+
+                    b.Property<string>("ProductJson")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("PRODUCT_JSON");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                        .HasMaxLength(100)
+                        .HasColumnType("datetime")
+                        .HasColumnName("UPDATED_AT");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductLogs");
+                    b.ToTable("PRODUCT_LOG", (string)null);
                 });
 
-            modelBuilder.Entity("CategoryProduct", b =>
+            modelBuilder.Entity("Adimax.Domain.ProductCategory", b =>
                 {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
+                    b.HasOne("Adimax.Domain.Category", "CategoryIn")
+                        .WithMany("ProductCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoriesId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("PRODUTO_CATEGORIA", (string)null);
-                });
-
-            modelBuilder.Entity("Adimax.Domain.ProductLog", b =>
-                {
-                    b.HasOne("Adimax.Domain.Product", "ProductJson")
-                        .WithMany()
+                    b.HasOne("Adimax.Domain.Product", "ProductIn")
+                        .WithMany("ProductCategories")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ProductJson");
+                    b.Navigation("CategoryIn");
+
+                    b.Navigation("ProductIn");
                 });
 
-            modelBuilder.Entity("CategoryProduct", b =>
+            modelBuilder.Entity("Adimax.Domain.Category", b =>
                 {
-                    b.HasOne("Adimax.Domain.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ProductCategories");
+                });
 
-                    b.HasOne("Adimax.Domain.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("Adimax.Domain.Product", b =>
+                {
+                    b.Navigation("ProductCategories");
                 });
 #pragma warning restore 612, 618
         }

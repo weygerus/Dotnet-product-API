@@ -8,12 +8,13 @@ namespace Adimax.Infrastructure.Data
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
-            Database.EnsureCreated();
+           
         }
 
         // Representacao das tabelas no banco de dados.
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductLog> ProductLogs { get; set; }
 
         // Personaliza a criacao das tabelas.

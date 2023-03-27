@@ -1,15 +1,16 @@
 ﻿using Adimax.Domain;
+using Adimax.Infrastructure.Data.DTO;
 
 namespace adimax.infrastructure.data.contract.interfaces
 {
     // interface generica que recebe uma entidade (ex: category, product)
     public interface IRepositoryBase<TEntity>
     {
-        public Task<IEnumerable<TEntity>> GetAll();
+        public Task<IEnumerable<object>> GetAll();
 
-        public Task<TEntity> GetById(int id);
+        public Task<TEntity> GetById(int id, CancellationToken cancellationToken);
 
-        public Task<TEntity> AddAsync(TEntity entity);
+        public ProductResponseDTO AddAsync(TEntity entity);
 
         public void UpdateItem(TEntity entity);
 

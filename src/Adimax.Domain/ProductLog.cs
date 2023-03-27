@@ -11,6 +11,6 @@ namespace Adimax.Domain
         public int Id { get; set; }
         public int ProductId {get; set; }
         public DateTime UpdatedAt { get; set; }
-        public Product ProductJson { get; set; }
+        public string ProductJson { get; set; }
     }
 }

@@ -34,14 +34,12 @@ namespace Adimax.Domain
         /// Gets or Sets do objeto da categoria.
         /// </summary>
         ///[SwggerIgnore]
-        public ICollection<Category> Categories { get; set; }
-
-        public List<CategoryName> CategoryName { get; set; }
+        public ICollection<ProductCategory> ProductCategories { get; set; }
 
         /// <summary>
         /// Gets or Sets da data de criação.
         /// </summary>
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } =  DateTime.Now;
 
         /// <summary>
         /// Gets or Sets do (identificar campo).

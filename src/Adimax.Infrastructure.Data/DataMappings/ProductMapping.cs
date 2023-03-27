@@ -14,14 +14,13 @@ namespace Adimax.Infrastructure.Data.DataMappings
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             builder.ToTable("PRODUTO")
-                .HasMany(c => c.Categories)
-                .WithMany(p => p.Products)
-                .UsingEntity(Rel => Rel.ToTable("PRODUTO_CATEGORIA"));
+                .HasMany(p => p.ProductCategories)
+                .WithOne(pc => pc.ProductIn)
+                .HasForeignKey(pc => pc.ProductId);
 
             builder.Property(prop => prop.Id)
                 .HasColumnName("ID")
-                .UseIdentityColumn()
-                .IsRequired();
+                .UseIdentityColumn();
 
             builder.Property(prop => prop.Name)
                 .HasColumnName("NAME")

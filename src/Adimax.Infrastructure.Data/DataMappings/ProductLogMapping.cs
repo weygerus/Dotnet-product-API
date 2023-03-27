@@ -13,11 +13,11 @@ namespace Adimax.Infrastructure.Data.DataMappings
     {
         public void Configure(EntityTypeBuilder<ProductLog> builder)
         {
-            builder.ToTable("PRODUCT_LOG");
+            builder.ToTable("PRODUCT_LOG")
+                   .HasNoKey();
 
-            builder.Property(prop => prop.ProductId)
+            builder.Property(prop => prop.Id)
                 .HasColumnName("ID")
-                .UseIdentityColumn()
                 .IsRequired();
 
             builder.Property(prop => prop.ProductId)
@@ -30,9 +30,8 @@ namespace Adimax.Infrastructure.Data.DataMappings
                 .HasColumnType("datetime")
                 .HasMaxLength(100);
 
-            builder.Property(prop => prop.UpdatedAt)
+            builder.Property(prop => prop.ProductJson)
                 .HasColumnName("PRODUCT_JSON")
-                .HasColumnType("varchar")
                 .HasMaxLength(5000);
         }
 

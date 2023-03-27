@@ -16,12 +16,11 @@ namespace Adimax_RestAPI.Controllers
             _categoryRepository = categoryRepository;
         }
 
-
         [HttpGet]
-        [Route("api/GetCategory/{id}")]
+        [Route("api/GetCategory/{Id}")]
         public async Task<object> GetCategoryById(int Id)
         {
-            var category = await _categoryRepository.GetById(Id);
+            var category = await _categoryRepository.GetById(Id, cancellationToken: CancellationToken.None);
 
             if (category == null)
             {
@@ -40,14 +39,14 @@ namespace Adimax_RestAPI.Controllers
 
         [HttpPost]
         [Route("api/InsertCategory")]
-        public async Task<object> AddCategoryAsync(Category category)
+        public async Task<object> AddCategory([FromBody]Category category)
         {
             if (category == null)
             {
                 return NoContent();
             }
 
-            await _categoryRepository.AddAsync(category);
+            _categoryRepository.AddAsync(category);
 
             var response = new ProductResponseDTO();
             return response;
@@ -62,7 +61,7 @@ namespace Adimax_RestAPI.Controllers
                 return BadRequest();
             }
 
-            var oldCategory = await _categoryRepository.GetById(Id);
+            var oldCategory = await _categoryRepository.GetById(Id, cancellationToken: CancellationToken.None);
 
             if (oldCategory == null)
             {
@@ -82,7 +81,7 @@ namespace Adimax_RestAPI.Controllers
         [Route("api/DeleteCategory/{id}")]
         public async Task<object> DeleteCategory(int Id)
         {
-            var category = await _categoryRepository.GetById(Id);
+            var category = await _categoryRepository.GetById(Id, cancellationToken: CancellationToken.None);
 
             if (category == null)
             {

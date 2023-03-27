@@ -14,13 +14,12 @@ namespace Adimax.Infrastructure.Data.DataMappings
         public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.ToTable("CATEGORIA")
-                .HasMany(n => n.Products)
-                .WithMany(n => n.Categories);
+                .HasMany(p => p.ProductCategories)
+                .WithOne(n => n.CategoryIn);
 
             builder.Property(prop => prop.Id)
                 .HasColumnName("ID")
-                .UseIdentityColumn()
-                .IsRequired();
+                .UseIdentityColumn();
 
             builder.Property(prop => prop.Name)
                 .HasColumnName("Name")
@@ -38,7 +37,7 @@ namespace Adimax.Infrastructure.Data.DataMappings
                 .HasMaxLength(100);
 
             builder.Property(prop => prop.UpdateAt)
-                .HasColumnName("UPDATED_AT")
+                .HasColumnName("UPDATE_AT")
                 .HasColumnType("datetime")
                 .HasMaxLength(100);
         }

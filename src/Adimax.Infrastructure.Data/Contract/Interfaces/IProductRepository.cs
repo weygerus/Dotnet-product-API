@@ -1,18 +1,19 @@
 ﻿using Adimax.Domain;
 using adimax.infrastructure.data.contract.interfaces;
+using Adimax.Infrastructure.Data.DTO;
 
 namespace Adimax.Infrastructure.Data.Contract.Interfaces
 {
     public interface IProductRepository : IRepositoryBase<Product>
     {
         // --> METODOS QUERY
-        public Task<IEnumerable<Product>> GetAll();
+        public Task<IEnumerable<object>> GetAll();
 
-        public Task<Product> GetById(int id);
+        public Task<Product> GetById(int id, CancellationToken cancellationToken);
 
 
         // --> METODOS COMMAND
-        public Task<Product> AddAsync(Product product);
+        public ProductResponseDTO AddAsync(Product product);
 
         public void UpdateItem(Product newProduct);
 

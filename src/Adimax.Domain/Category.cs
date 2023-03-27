@@ -26,16 +26,16 @@ namespace Adimax.Domain
         /// <summary>
         /// Gets or Sets dos produtos.
         /// </summary>
-        public ICollection<Product> Products { get; set; }
+        public ICollection<ProductCategory> ProductCategories { get; set; }
 
         /// <summary>
         /// Gets or Sets da criação.
         /// </summary>
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         /// <summary>
         /// Gets or Sets da atualização.
         /// </summary>
-        public DateTime UpdateAt { get; set; }
+        public DateTime UpdateAt { get; set; } = DateTime.Now;
     }
 }

@@ -1,22 +1,23 @@
 ﻿using adimax.infrastructure.data.contract.interfaces;
+using Adimax.Infrastructure.Data.DTO;
 
 namespace Adimax.Infrastructure.Data.Contract.Interfaces
 {
     public class RepositoryBase<TEntity> : IRepositoryBase<TEntity>, IAsyncDisposable where TEntity : class
     {
         //-->Metodos QUERY
-        public Task<IEnumerable<TEntity>> GetAll()
+        public Task<IEnumerable<object>> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        public Task<TEntity> GetById(int id)
+        public Task<TEntity> GetById(int id, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         //-->Metodos COMMAND
-        public Task<TEntity> AddAsync(TEntity entity)
+        public ProductResponseDTO AddAsync(TEntity entity)
         {
             throw new NotImplementedException();
         }

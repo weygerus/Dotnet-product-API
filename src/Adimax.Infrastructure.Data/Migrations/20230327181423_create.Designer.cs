@@ -4,6 +4,7 @@ using Adimax.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adimax.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230327181423_create")]
+    partial class create
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,24 +125,20 @@ namespace Adimax.Infrastructure.Data.Migrations
             modelBuilder.Entity("Adimax.Domain.ProductLog", b =>
                 {
                     b.Property<int>("Id")
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnType("int");
 
                     b.Property<int>("ProductId")
                         .HasMaxLength(10)
                         .HasColumnType("int")
                         .HasColumnName("PRODUCT_ID");
 
-                    b.Property<string>("ProductJson")
+                    b.Property<string>("UpdatedAt")
                         .IsRequired()
                         .HasMaxLength(5000)
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("varchar")
                         .HasColumnName("PRODUCT_JSON");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasMaxLength(100)
-                        .HasColumnType("datetime")
-                        .HasColumnName("UPDATED_AT");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("PRODUCT_LOG", (string)null);
                 });
@@ -161,6 +160,17 @@ namespace Adimax.Infrastructure.Data.Migrations
                     b.Navigation("CategoryIn");
 
                     b.Navigation("ProductIn");
+                });
+
+            modelBuilder.Entity("Adimax.Domain.ProductLog", b =>
+                {
+                    b.HasOne("Adimax.Domain.Product", "ProductJson")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductJson");
                 });
 
             modelBuilder.Entity("Adimax.Domain.Category", b =>

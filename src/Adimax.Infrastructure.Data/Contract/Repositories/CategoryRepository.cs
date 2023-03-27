@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Adimax.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Adimax.Infrastructure.Data.DTO;
 
 namespace Adimax.Infrastructure.Data.Contract.Interfaces
 {
@@ -15,23 +16,39 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
         }
 
         // -->Metodos QUERY
-        public async Task<IEnumerable<Category>> GetAll()
+        public async Task<IEnumerable<object>> GetAll()
         {
-            return await _dbContext.Categories.ToListAsync();
+            var categories = await _dbContext.Categories.Include(c => c.ProductCategories)
+                                                        .ThenInclude(pc => pc.ProductIn)
+                                                        .ToListAsync();
+
+            return categories.Select(c => new
+            {
+                c.Id,
+                c.Name,
+                c.Description,
+                Products = c.ProductCategories.Select(pc => pc.ProductIn.Name),
+                c.CreatedAt,
+                c.UpdateAt
+            });
+           // return await _dbContext.Categories.ToListAsync();
         }
 
-        public async Task<Category> GetById(int Id)
+        public async Task<Category> GetById(int Id, CancellationToken cancellationToken)
         {
-            return await _dbContext.Categories.FindAsync(Id);
+            var category = await _dbContext.Categories.FindAsync(Id);
+
+            return category;
         }
 
         // -->Metodos ALTERACAO
-        public async Task<Category> AddAsync(Category category)
+        public ProductResponseDTO AddAsync(Category category)
         {
             _dbContext.Categories.Add(category);
             _dbContext.SaveChanges();
 
-            return category;
+            var res = new ProductResponseDTO();
+            return res;
         }
 
         public async void UpdateItem(Category oldCategory)

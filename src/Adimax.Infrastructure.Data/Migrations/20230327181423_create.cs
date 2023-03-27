@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Adimax.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class create : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,10 +17,10 @@ namespace Adimax.Infrastructure.Data.Migrations
                 {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false),
                     DESCRICAO = table.Column<string>(type: "varchar(400)", maxLength: 400, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CREATED_AT = table.Column<DateTime>(type: "datetime", maxLength: 100, nullable: false),
+                    UPDATE_AT = table.Column<DateTime>(type: "datetime", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,68 +45,66 @@ namespace Adimax.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductLogs",
+                name: "PRODUCT_CATEGORY",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    PRODUCT_ID = table.Column<int>(type: "int", maxLength: 100, nullable: false),
+                    CATEGORY_ID = table.Column<int>(type: "int", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductLogs", x => x.Id);
+                    table.PrimaryKey("PK_PRODUCT_CATEGORY", x => new { x.PRODUCT_ID, x.CATEGORY_ID });
                     table.ForeignKey(
-                        name: "FK_ProductLogs_PRODUTO_ProductId",
-                        column: x => x.ProductId,
+                        name: "FK_PRODUCT_CATEGORY_CATEGORIA_CATEGORY_ID",
+                        column: x => x.CATEGORY_ID,
+                        principalTable: "CATEGORIA",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PRODUCT_CATEGORY_PRODUTO_PRODUCT_ID",
+                        column: x => x.PRODUCT_ID,
                         principalTable: "PRODUTO",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "PRODUTO_CATEGORIA",
+                name: "PRODUCT_LOG",
                 columns: table => new
                 {
-                    CategoriesId = table.Column<int>(type: "int", nullable: false),
-                    ProductsId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    PRODUCT_ID = table.Column<int>(type: "int", maxLength: 10, nullable: false),
+                    PRODUCT_JSON = table.Column<string>(type: "varchar(5000)", maxLength: 5000, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PRODUTO_CATEGORIA", x => new { x.CategoriesId, x.ProductsId });
                     table.ForeignKey(
-                        name: "FK_PRODUTO_CATEGORIA_CATEGORIA_CategoriesId",
-                        column: x => x.CategoriesId,
-                        principalTable: "CATEGORIA",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PRODUTO_CATEGORIA_PRODUTO_ProductsId",
-                        column: x => x.ProductsId,
+                        name: "FK_PRODUCT_LOG_PRODUTO_PRODUCT_ID",
+                        column: x => x.PRODUCT_ID,
                         principalTable: "PRODUTO",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductLogs_ProductId",
-                table: "ProductLogs",
-                column: "ProductId");
+                name: "IX_PRODUCT_CATEGORY_CATEGORY_ID",
+                table: "PRODUCT_CATEGORY",
+                column: "CATEGORY_ID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PRODUTO_CATEGORIA_ProductsId",
-                table: "PRODUTO_CATEGORIA",
-                column: "ProductsId");
+                name: "IX_PRODUCT_LOG_PRODUCT_ID",
+                table: "PRODUCT_LOG",
+                column: "PRODUCT_ID");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ProductLogs");
+                name: "PRODUCT_CATEGORY");
 
             migrationBuilder.DropTable(
-                name: "PRODUTO_CATEGORIA");
+                name: "PRODUCT_LOG");
 
             migrationBuilder.DropTable(
                 name: "CATEGORIA");

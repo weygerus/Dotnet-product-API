@@ -4,6 +4,7 @@ using Adimax.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Adimax.Infrastructure.Data.DTO;
 
 namespace Adimax.Infrastructure.Data.Contract.Interfaces
 {
@@ -16,23 +17,36 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
         }
 
         // -->Metodos QUERY
-        public async Task<IEnumerable<Product>> GetAll()
+        public async Task<IEnumerable<object>> GetAll()
         {
-            return await _dbContext.Products.ToListAsync();
+            var products = await _dbContext.Products.Include(p => p.ProductCategories)
+                                                    .ThenInclude(pc => pc.CategoryIn)
+                                                    .ToListAsync();
+
+            return products.Select(p => new
+            {
+                p.Id,
+                p.Name,
+                p.Price,
+                Categories = p.ProductCategories.Select(pc => pc.CategoryIn.Name),
+                p.CreatedAt,
+                p.HasPendingLogUpdate
+            }) ;
         }
 
-        public async Task<Product> GetById(int Id)
+        public async Task<Product> GetById(int Id, CancellationToken cancellationToken)
         {
             return await _dbContext.Products.FindAsync(Id);
         }
 
         // -->Metodos ALTERACAO
-        public async Task<Product> AddAsync(Product product)
+        public ProductResponseDTO AddAsync(Product product)
         {
             _dbContext.Products.Add(product);
             _dbContext.SaveChanges();
 
-            return product;
+            var res = new ProductResponseDTO();
+            return res;
         }
 
         public void UpdateItem(Product oldProduct)

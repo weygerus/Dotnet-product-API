@@ -17,10 +17,10 @@ namespace Adimax_RestAPI.Controllers
         }
 
         [HttpGet]
-        [Route("api/GetProduct/{id}")]
-        public async Task<object> GetProductById(int id)
+        [Route("api/GetProduct/{Id}")]
+        public async Task<object> GetProductById(int Id)
         {
-            var product = await _productRepository.GetById(id);
+            var product = await _productRepository.GetById(Id, cancellationToken: CancellationToken.None);
 
             if(product == null)
             {
@@ -39,14 +39,14 @@ namespace Adimax_RestAPI.Controllers
 
         [HttpPost]
         [Route("api/InsertProduct")]
-        public async Task<object> AddProductAsync(Product product)
+        public async Task<object> AddProductAsync([FromBody]Product product)
         {
             if (product == null)
             {
                 return NoContent();
             }
 
-            await _productRepository.AddAsync(product);
+            _productRepository.AddAsync(product);
 
             var response = new ProductResponseDTO();
             return response;
@@ -61,7 +61,7 @@ namespace Adimax_RestAPI.Controllers
                 return BadRequest();
             }
 
-            var oldProduct = await _productRepository.GetById(Id);
+            var oldProduct = await _productRepository.GetById(Id, cancellationToken: CancellationToken.None);
 
             if (oldProduct == null)
             {
@@ -83,7 +83,7 @@ namespace Adimax_RestAPI.Controllers
         [Route("api/DeleteProduct")]
         public async Task<object> DeleteProduct(int Id)
         {
-            var product = await _productRepository.GetById(Id); 
+            var product = await _productRepository.GetById(Id, cancellationToken: CancellationToken.None); 
            
             if(product == null)
             {
