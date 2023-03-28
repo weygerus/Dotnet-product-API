@@ -44,6 +44,6 @@ namespace Adimax.Domain
         /// <summary>
         /// Gets or Sets do (identificar campo).
         /// </summary>
-        public string HasPendingLogUpdate { get; set; }
+        public bool HasPendingLogUpdate { get; set; }
     }
 }

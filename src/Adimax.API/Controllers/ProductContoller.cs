@@ -18,7 +18,7 @@ namespace Adimax_RestAPI.Controllers
 
         [HttpGet]
         [Route("api/GetProduct/{Id}")]
-        public async Task<object> GetProductById(int Id)
+        public async Task<object> GetProduct(int Id)
         {
             var product = await _productRepository.GetById(Id, cancellationToken: CancellationToken.None);
 
@@ -39,7 +39,7 @@ namespace Adimax_RestAPI.Controllers
 
         [HttpPost]
         [Route("api/InsertProduct")]
-        public async Task<object> AddProductAsync([FromBody]Product product)
+        public async Task<object> AddProduct([FromBody]Product product)
         {
             if (product == null)
             {
@@ -54,7 +54,7 @@ namespace Adimax_RestAPI.Controllers
 
         [HttpPut]
         [Route("api/UpdateProduct/{id}")]
-        public async Task<object> UpdateAsync(int Id, [FromBody]Product newProduct)
+        public async Task<object> UpdateProduct(int Id, [FromBody]Product newProduct)
         {
             if (newProduct == null || Id != newProduct.Id)
             {

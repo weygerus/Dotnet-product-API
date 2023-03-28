@@ -18,7 +18,7 @@ namespace Adimax_RestAPI.Controllers
 
         [HttpGet]
         [Route("api/GetCategory/{Id}")]
-        public async Task<object> GetCategoryById(int Id)
+        public async Task<object> GetCategory(int Id)
         {
             var category = await _categoryRepository.GetById(Id, cancellationToken: CancellationToken.None);
 

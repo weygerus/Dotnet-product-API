@@ -10,5 +10,9 @@ namespace Adimax.Infrastructure.Data.DTO
     {
         public int Id { get; set; }
         public string Message { get; set; }
+
+        public bool HasPending { get; set; }
+
+        public ProductResponseDTO() { }
     }
 }

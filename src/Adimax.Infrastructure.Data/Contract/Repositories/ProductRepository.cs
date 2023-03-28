@@ -40,14 +40,25 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
         }
 
         // -->Metodos ALTERACAO
-        public ProductResponseDTO AddAsync(Product product)
-        {
-            _dbContext.Products.Add(product);
-            _dbContext.SaveChanges();
+        //public ProductResponseDTO AddAsync(Product product)
+        //{
+        //    if(product == null)
+        //    {
+        //        throw new ArgumentNullException(nameof(product));
+        //    }
 
-            var res = new ProductResponseDTO();
-            return res;
-        }
+        //    _dbContext.Products.Add(product);
+        //    _dbContext.SaveChanges();
+
+        //    //var res = new ProductResponseDTO(p => new
+        //    //{
+        //    //    p.Id = product.Id,
+        //    //    p.Message = "alterado com sucesso",
+        //    //    p.hasPending = true
+        //    //});
+            
+        //    //return res;
+        //}
 
         public void UpdateItem(Product oldProduct)
         {
@@ -65,6 +76,11 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
             }
             _dbContext.Products.Remove(DeleteProduct);
             _dbContext.SaveChanges();
+        }
+
+        public ProductResponseDTO AddAsync(Product product)
+        {
+            throw new NotImplementedException();
         }
     }
 }
