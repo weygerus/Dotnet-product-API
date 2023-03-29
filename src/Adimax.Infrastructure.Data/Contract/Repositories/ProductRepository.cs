@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Adimax.Infrastructure.Data.DTO;
+using Adimax.API.Services;
 
 namespace Adimax.Infrastructure.Data.Contract.Interfaces
 {
     public class ProductRepository : IProductRepository
     {
         private readonly DatabaseContext _dbContext;
+
         public ProductRepository(DatabaseContext dbContext) 
         {
             _dbContext = dbContext;
@@ -39,26 +41,19 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
             return await _dbContext.Products.FindAsync(Id);
         }
 
-        // -->Metodos ALTERACAO
-        //public ProductResponseDTO AddAsync(Product product)
-        //{
-        //    if(product == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(product));
-        //    }
+         //-->Metodos ALTERACAO
+        public Product AddAsync(Product product)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
 
-        //    _dbContext.Products.Add(product);
-        //    _dbContext.SaveChanges();
+            _dbContext.Products.Add(product);
+            _dbContext.SaveChanges();
 
-        //    //var res = new ProductResponseDTO(p => new
-        //    //{
-        //    //    p.Id = product.Id,
-        //    //    p.Message = "alterado com sucesso",
-        //    //    p.hasPending = true
-        //    //});
-            
-        //    //return res;
-        //}
+            return product;
+        }
 
         public void UpdateItem(Product oldProduct)
         {
@@ -76,11 +71,6 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
             }
             _dbContext.Products.Remove(DeleteProduct);
             _dbContext.SaveChanges();
-        }
-
-        public ProductResponseDTO AddAsync(Product product)
-        {
-            throw new NotImplementedException();
         }
     }
 }
