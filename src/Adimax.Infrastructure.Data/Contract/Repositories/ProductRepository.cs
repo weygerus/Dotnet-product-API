@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Adimax.Infrastructure.Data.DTO;
-using Adimax.API.Services;
 
 namespace Adimax.Infrastructure.Data.Contract.Interfaces
 {

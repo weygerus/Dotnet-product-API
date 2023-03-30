@@ -2,7 +2,6 @@
 using Adimax.Domain;
 using Adimax.Infrastructure.Data.Contract.Interfaces;
 using Adimax.Infrastructure.Data.DTO;
-using System.Net.Http;
 
 namespace Adimax_RestAPI.Controllers
 {

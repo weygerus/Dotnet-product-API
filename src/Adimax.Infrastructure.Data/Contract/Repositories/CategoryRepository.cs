@@ -54,13 +54,12 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
         }
 
         // -->Metodos ALTERACAO
-        public ProductResponseDTO AddAsync(Category category)
+        public Category AddAsync(Category category)
         {
             _dbContext.Categories.Add(category);
             _dbContext.SaveChanges();
 
-            var res = new ProductResponseDTO();
-            return res;
+            return category;
         }
 
         public async void UpdateItem(Category oldCategory)

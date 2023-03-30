@@ -18,7 +18,7 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
 
 
             // --> METODOS COMMAND
-            public ProductResponseDTO AddAsync(ProductLog productLog);
+            public ProductLog AddAsync(ProductLog productLog);
 
             public void UpdateItem(ProductLog newProductLog);
 

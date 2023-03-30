@@ -1,5 +1,3 @@
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.OpenApi.Models;
 using Adimax.Infrastructure.Data;
 using Adimax.Infrastructure.Data.Contract.Interfaces;
