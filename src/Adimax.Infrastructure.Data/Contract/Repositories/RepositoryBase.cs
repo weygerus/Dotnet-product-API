@@ -17,7 +17,7 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
         }
 
         //-->Metodos COMMAND
-        public TEntity AddAsync(TEntity entity)
+        public ProductResponseDTO AddAsync(TEntity entity)
         {
             throw new NotImplementedException();
         }

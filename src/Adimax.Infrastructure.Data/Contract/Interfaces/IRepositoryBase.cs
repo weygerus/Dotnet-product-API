@@ -10,7 +10,7 @@ namespace adimax.infrastructure.data.contract.interfaces
 
         public Task<TEntity> GetById(int id, CancellationToken cancellationToken);
 
-        public TEntity AddAsync(TEntity entity);
+        public ProductResponseDTO AddAsync(TEntity entity);
 
         public void UpdateItem(TEntity entity);
 

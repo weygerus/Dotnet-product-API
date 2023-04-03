@@ -8,14 +8,14 @@ using Adimax.Infrastructure.Data.Contract.Repositories;
 
 namespace Adimax.API.Services
 {
-    public class HangfireService
+    public class HangfireTrigger
     {
         private readonly IRecurringJobManager _jobManager;
         private readonly IProductRepository _productRepository;
         private readonly ProductLogController _productLogController;
         private readonly DatabaseContext _dbContext;
 
-        public HangfireService
+        public HangfireTrigger
             (
             IRecurringJobManager jobManager,
             IProductRepository productRepository,
@@ -28,23 +28,22 @@ namespace Adimax.API.Services
             _productRepository = productRepository;
             _dbContext = context;
         }
+        //public async Product PopulateProductLogTable(Product product)
+        //{
+        //    if(_dbContext.Products.FindAsync(p=>p.HasPendingLogUpdate == true))
+        //    {
+        //        await _productLogController.AddProductLog(product);
+        //    }
+        //}
 
-        public Product PopulateProductLogTable(Product product)
+        public void fake()
         {
-            product = _productRepository.AddAsync(product);
 
-            if ( _dbContext.Products.FindAsync(product) == null)
-            {
-               _productLogController.AddProductLog(product);
-            }
+        } 
 
-            var res = new Product();
-            return res;
-        }
-
-        public void HangfireTrigger()
+        public void Trigger()
         {
-            _jobManager.AddOrUpdate("PopulateProductLogTable", () => PopulateProductLogTable(product), Cron.Minutely());
+            _jobManager.AddOrUpdate("AddProductLog", () => fake(), Cron.Minutely());
         }
     }
 }

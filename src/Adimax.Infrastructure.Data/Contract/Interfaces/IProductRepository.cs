@@ -13,7 +13,7 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
 
 
         // --> METODOS COMMAND
-        public Product AddAsync(Product product);
+        public ProductResponseDTO AddAsync(Product product);
 
         public void UpdateItem(Product newProduct);
 
