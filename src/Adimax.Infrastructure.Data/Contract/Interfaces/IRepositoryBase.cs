@@ -8,12 +8,12 @@ namespace adimax.infrastructure.data.contract.interfaces
     {
         public Task<IEnumerable<object>> GetAll();
 
-        public Task<TEntity> GetById(int id, CancellationToken cancellationToken);
+        public Task<TEntity> GetById(int Id);
 
         public ProductResponseDTO AddAsync(TEntity entity);
 
         public void UpdateItem(TEntity entity);
 
-        public Task DeleteItem(TEntity entity);
+        public Task<TEntity> DeleteItem(TEntity entity);
     }
 }

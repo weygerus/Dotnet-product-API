@@ -15,7 +15,8 @@ namespace Adimax.Infrastructure.Data.DataMappings
         {
             builder.ToTable("CATEGORIA")
                 .HasMany(p => p.ProductCategories)
-                .WithOne(n => n.CategoryIn);
+                .WithOne(n => n.CategoryIn)
+                .HasForeignKey(pc => pc.CategoryId);
 
             builder.Property(prop => prop.Id)
                 .HasColumnName("ID")

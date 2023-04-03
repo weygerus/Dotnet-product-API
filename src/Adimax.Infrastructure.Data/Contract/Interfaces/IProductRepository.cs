@@ -9,7 +9,7 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
         // --> METODOS QUERY
         public Task<IEnumerable<object>> GetAll();
 
-        public Task<Product> GetById(int id, CancellationToken cancellationToken);
+        public Task<Product> GetById(int id);
 
 
         // --> METODOS COMMAND
@@ -17,6 +17,6 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
 
         public void UpdateItem(Product newProduct);
 
-        public Task DeleteItem(Product product); 
+        public Task<Product> DeleteItem(Product product); 
     }
 }

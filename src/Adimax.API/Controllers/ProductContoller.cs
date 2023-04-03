@@ -2,13 +2,11 @@
 using Adimax.Domain;
 using Adimax.Infrastructure.Data.Contract.Interfaces;
 using Adimax.Infrastructure.Data.DTO;
-using System.Net.Http;
 
 namespace Adimax_RestAPI.Controllers
 {
     public class ProductController : ControllerBase
     {
-        private readonly List<Product> productsList = new List<Product>();
         private readonly IProductRepository _productRepository;
 
         public ProductController(IProductRepository productRepository)
@@ -16,11 +14,14 @@ namespace Adimax_RestAPI.Controllers
             _productRepository = productRepository;
         }
 
+        /// <summary>
+        /// CONSULTAR UM PRODUTO POR ID.
+        /// </summary>
         [HttpGet]
         [Route("api/GetProduct/{Id}")]
         public async Task<object> GetProductById(int Id)
         {
-            var product = await _productRepository.GetById(Id, cancellationToken: CancellationToken.None);
+            var product = await _productRepository.GetById(Id);
 
             if(product == null)
             {
@@ -29,14 +30,20 @@ namespace Adimax_RestAPI.Controllers
             return Ok(product);
         }
 
+        /// <summary>
+        /// CONSULTAR TODOS OS PRODUTOS.
+        /// </summary>
         [HttpGet]
         [Route("api/GetAllProducts")]
-        public async Task<ActionResult> GetAllProducts()
+        public async Task<ActionResult> GetProductsAsync()
         {
             var products = await _productRepository.GetAll();
             return Ok(products);
         }
 
+        /// <summary>
+        /// ADICIONAR UM PRODUTO.
+        /// </summary>
         [HttpPost]
         [Route("api/InsertProduct")]
         public async Task<object> AddProductAsync([FromBody]Product product)
@@ -52,45 +59,53 @@ namespace Adimax_RestAPI.Controllers
             return response;
         }
 
+        /// <summary>
+        /// ATUALIZAR UM PRODUTO.
+        /// </summary>
         [HttpPut]
-        [Route("api/UpdateProduct/{id}")]
-        public async Task<object> UpdateAsync(int Id, [FromBody]Product newProduct)
+        [Route("api/UpdateProduct/{Id}")]
+        public async Task<object> UpdateProductAsync(int Id, [FromBody] Product newProduct)
         {
+            newProduct.Id = Id;
+
             if (newProduct == null || Id != newProduct.Id)
             {
                 return BadRequest();
             }
 
-            var oldProduct = await _productRepository.GetById(Id, cancellationToken: CancellationToken.None);
+            var oldProduct = await _productRepository.GetById(Id);
 
             if (oldProduct == null)
             {
                 return NotFound();
             }
-                //-->Substituir por foreach
-                oldProduct.Name = newProduct.Name;
-                oldProduct.Description = newProduct.Description;
-                oldProduct.Price = newProduct.Price;
-                oldProduct.CreatedAt = newProduct.CreatedAt;
-                oldProduct.HasPendingLogUpdate = newProduct.HasPendingLogUpdate;
 
-                _productRepository.UpdateItem(oldProduct);
+            oldProduct.Name = newProduct.Name;
+            oldProduct.Description = newProduct.Description;
+            oldProduct.Price = newProduct.Price;
+            oldProduct.CreatedAt = newProduct.CreatedAt;
+            oldProduct.HasPendingLogUpdate = newProduct.HasPendingLogUpdate;
 
-                return Ok(newProduct);
+            _productRepository.UpdateItem(oldProduct);
+
+            return Ok(newProduct);
         }
 
+        /// <summary>
+        /// DELETAR UM PRODUTO.
+        /// </summary>
         [HttpDelete]
-        [Route("api/DeleteProduct")]
-        public async Task<object> DeleteProduct(int Id)
+        [Route("api/DeleteProduct/{Id}")]
+        public async Task<Product> DeleteProductAsync(int Id)
         {
-            var product = await _productRepository.GetById(Id, cancellationToken: CancellationToken.None); 
+            var product = await _productRepository.GetById(Id); 
            
-            if(product == null)
+            if (product == null)
             {
-                return NoContent();
+                throw new Exception("Nao encontrado");
             }
-                _productRepository.DeleteItem(product);
-                return Ok();
+                await _productRepository.DeleteItem(product);
+                return product;
         }
     }
 }

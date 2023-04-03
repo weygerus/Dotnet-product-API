@@ -1,6 +1,7 @@
 ﻿using Adimax.Domain;
 using adimax.infrastructure.data.contract.interfaces;
 using Adimax.Infrastructure.Data.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Adimax.Infrastructure.Data.Contract.Interfaces
 {
@@ -9,14 +10,14 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
         // --> METODOS QUERY
         public Task<IEnumerable<object>> GetAll();
 
-        public Task<Category> GetById(int id, CancellationToken cancellationToken);
+        public Task<Category> GetById(int id);
 
 
         // --> METODOS COMMAND
-        public ProductResponseDTO AddAsync(Category category);
+        public ProductResponseDTO AddAsync([FromBody]Category category);
 
         public void UpdateItem(Category category);
 
-        public Task DeleteItem(Category category);
+        public Task<Category> DeleteItem(Category category);
     }
 }

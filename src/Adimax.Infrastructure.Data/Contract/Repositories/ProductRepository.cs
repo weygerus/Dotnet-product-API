@@ -16,6 +16,8 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
             _dbContext = dbContext;
         }
 
+
+
         // -->Metodos QUERY
         public async Task<IEnumerable<object>> GetAll()
         {
@@ -34,10 +36,16 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
             }) ;
         }
 
-        public async Task<Product> GetById(int Id, CancellationToken cancellationToken)
+
+
+
+        public async Task<Product> GetById(int Id)
         {
             return await _dbContext.Products.FindAsync(Id);
         }
+
+
+
 
         // -->Metodos ALTERACAO
         public ProductResponseDTO AddAsync(Product product)
@@ -49,22 +57,29 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
             return res;
         }
 
+       
+
+
         public void UpdateItem(Product oldProduct)
         {
             _dbContext.Products.Update(oldProduct);
             _dbContext.SaveChanges();
         }
 
-        public async Task DeleteItem(Product product)
-        {
-            var DeleteProduct = _dbContext.Products.Find(product);
+     
 
-            if(DeleteProduct == null)
+
+
+        public async Task<Product> DeleteItem(Product product)
+        { 
+            if(product == null)
             {
                 throw new Exception("Produto não encontrado");
             }
-            _dbContext.Products.Remove(DeleteProduct);
-            _dbContext.SaveChanges();
+            _dbContext.Products.Remove(product);
+            await _dbContext.SaveChangesAsync();
+
+            return product;
         }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Adimax.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class create : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,6 +25,19 @@ namespace Adimax.Infrastructure.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CATEGORIA", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PRODUCT_LOG",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false),
+                    PRODUCT_ID = table.Column<int>(type: "int", maxLength: 10, nullable: false),
+                    UPDATED_AT = table.Column<DateTime>(type: "datetime", maxLength: 100, nullable: false),
+                    PRODUCT_JSON = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false)
+                },
+                constraints: table =>
+                {
                 });
 
             migrationBuilder.CreateTable(
@@ -68,33 +81,10 @@ namespace Adimax.Infrastructure.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "PRODUCT_LOG",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false),
-                    PRODUCT_ID = table.Column<int>(type: "int", maxLength: 10, nullable: false),
-                    PRODUCT_JSON = table.Column<string>(type: "varchar(5000)", maxLength: 5000, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.ForeignKey(
-                        name: "FK_PRODUCT_LOG_PRODUTO_PRODUCT_ID",
-                        column: x => x.PRODUCT_ID,
-                        principalTable: "PRODUTO",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_PRODUCT_CATEGORY_CATEGORY_ID",
                 table: "PRODUCT_CATEGORY",
                 column: "CATEGORY_ID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PRODUCT_LOG_PRODUCT_ID",
-                table: "PRODUCT_LOG",
-                column: "PRODUCT_ID");
         }
 
         /// <inheritdoc />

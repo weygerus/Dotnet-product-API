@@ -34,7 +34,7 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
            // return await _dbContext.Categories.ToListAsync();
         }
 
-        public async Task<Category> GetById(int Id, CancellationToken cancellationToken)
+        public async Task<Category> GetById(int Id)
         {
             return await _dbContext.Categories.FindAsync(Id);
 
@@ -66,19 +66,20 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
         public async void UpdateItem(Category oldCategory)
         {
             _dbContext.Categories.Update(oldCategory);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteItem(Category category)
+        public async Task<Category> DeleteItem(Category category)
         {
-            var DeleteProduct = _dbContext.Categories.Find(category);
-
-            if (DeleteProduct == null)
+            if (category == null)
             {
-                throw new Exception("Produto não encontrado");
+                throw new Exception("nao encontrada");
             }
-            _dbContext.Categories.Remove(DeleteProduct);
-            _dbContext.SaveChanges();
+
+            _dbContext.Categories.Remove(category);
+            await _dbContext.SaveChangesAsync();
+
+            return category;
         }
     }
 }

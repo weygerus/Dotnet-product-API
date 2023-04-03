@@ -11,7 +11,7 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
             throw new NotImplementedException();
         }
 
-        public Task<TEntity> GetById(int id, CancellationToken cancellationToken)
+        public Task<TEntity> GetById(int id)
         {
             throw new NotImplementedException();
         }
@@ -22,7 +22,7 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
             throw new NotImplementedException();
         }
 
-        public Task DeleteItem(TEntity entity)
+        public Task<TEntity> DeleteItem(TEntity entity)
         {
             throw new NotImplementedException();
         }
