@@ -29,7 +29,7 @@ namespace Adimax.Infrastructure.Data.Contract.Repositories
         }
 
         // --> METODOS COMMAND
-        public ProductLog AddAsync(Category category)
+        public ProductResponseDTO AddAsync(Category category)
         {
             throw new NotImplementedException();
         }

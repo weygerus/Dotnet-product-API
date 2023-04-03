@@ -1,8 +1,10 @@
-﻿using Hangfire;
-using Adimax.Domain;
+﻿using Adimax.Infrastructure.Data;
 using Adimax.API.Controllers;
-using Adimax.Infrastructure.Data;
+
+using Hangfire;
+using Adimax.Domain;
 using Adimax.Infrastructure.Data.Contract.Interfaces;
+using Adimax.Infrastructure.Data.Contract.Repositories;
 
 namespace Adimax.API.Services
 {
@@ -10,40 +12,39 @@ namespace Adimax.API.Services
     {
         private readonly IRecurringJobManager _jobManager;
         private readonly IProductRepository _productRepository;
+        private readonly ProductLogController _productLogController;
         private readonly DatabaseContext _dbContext;
 
         public HangfireService
             (
             IRecurringJobManager jobManager,
             IProductRepository productRepository,
-            DatabaseContext dbContext
+            ProductLogController productLogController,
+            DatabaseContext context
             )
         {
             _jobManager = jobManager;
+            _productLogController = productLogController;
             _productRepository = productRepository;
-            _dbContext = dbContext;
-        }
-
-        public void HangfireTrigger(Product product)
-        {
-            var productLog = _productRepository.AddAsync(product);
-
-            _jobManager.AddOrUpdate("PopulateProductLogTable", () => PopulateProductLogTable(productLog), Cron.Minutely());
+            _dbContext = context;
         }
 
         public Product PopulateProductLogTable(Product product)
         {
-            if (_dbContext.Products.FindAsync(product.Id) == null)
-            {
-                throw new Exception("Sem produtos");
-            }
+            product = _productRepository.AddAsync(product);
 
-            ProductLog productLog = new ProductLog(product.Id,product.Id,DateTime.Now,"");
-            _dbContext.ProductLogs.Add(productLog);
-            _dbContext.SaveChanges();
+            if ( _dbContext.Products.FindAsync(product) == null)
+            {
+               _productLogController.AddProductLog(product);
+            }
 
             var res = new Product();
             return res;
+        }
+
+        public void HangfireTrigger()
+        {
+            _jobManager.AddOrUpdate("PopulateProductLogTable", () => PopulateProductLogTable(product), Cron.Minutely());
         }
     }
 }

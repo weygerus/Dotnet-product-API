@@ -13,7 +13,7 @@ namespace Adimax.Infrastructure.Data.Contract.Interfaces
 
 
         // --> METODOS COMMAND
-        public Category AddAsync(Category category);
+        public ProductResponseDTO AddAsync(Category category);
 
         public void UpdateItem(Category category);
 

@@ -2,6 +2,7 @@
 using Adimax.Domain;
 using Adimax.Infrastructure.Data.Contract.Interfaces;
 using Adimax.Infrastructure.Data.DTO;
+using System.Net.Http;
 
 namespace Adimax.API.Controllers
 {
@@ -38,12 +39,14 @@ namespace Adimax.API.Controllers
 
         [HttpPost]
         [Route("api/InsertProduct")]
-        public async Task<object> AddProductLog(bool update)
+        public async Task<object> AddProductLog([FromBody] ProductLog productLogs)
         {
-            if (!update)
+            if (productLogs == null)
             {
                 return NoContent();
             }
+
+            _productLogRepository.AddAsync(productLogs);
 
             var response = new ProductResponseDTO();
             return response;
@@ -64,7 +67,6 @@ namespace Adimax.API.Controllers
             {
                 return NotFound();
             }
-
             //-->Substituir por foreach
             newProductLog.UpdatedAt = newProductLog.UpdatedAt;
             newProductLog.ProductJson = newProductLog.ProductJson;
