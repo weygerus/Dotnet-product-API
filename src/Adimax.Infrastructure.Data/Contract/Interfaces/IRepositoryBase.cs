@@ -1,7 +1,7 @@
 ﻿using Adimax.Domain;
 using Adimax.Infrastructure.Data.DTO;
 
-namespace adimax.infrastructure.data.contract.interfaces
+namespace Adimax.Infrastructure.Data.Contract.Interfaces
 {
     // interface generica que recebe uma entidade (ex: category, product)
     public interface IRepositoryBase<TEntity>

@@ -14,6 +14,8 @@ builder.Services.AddMvc();
 // Injeção de dependencias.
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<IProductLogRepository, ProductLogRepository>();
+
 
 //configuração do Swagger, referencia:https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

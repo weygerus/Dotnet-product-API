@@ -1,5 +1,5 @@
 ﻿using Adimax.Domain;
-using adimax.infrastructure.data.contract.interfaces;
+using Adimax.Infrastructure.Data.Contract.Interfaces;
 using Adimax.Infrastructure.Data.DTO;
 using Microsoft.AspNetCore.Mvc;
 

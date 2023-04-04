@@ -44,8 +44,7 @@ namespace Adimax.Infrastructure.Data.DataMappings
 
             builder.Property(prop => prop.HasPendingLogUpdate)
                 .HasColumnName("HasPendingLogUpdate")
-                .HasColumnType("varchar")
-                .HasMaxLength(20);
+                .HasColumnType("bit");
         }
     }
 }

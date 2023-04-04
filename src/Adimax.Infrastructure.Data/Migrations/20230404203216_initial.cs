@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Adimax.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,7 +34,7 @@ namespace Adimax.Infrastructure.Data.Migrations
                     ID = table.Column<int>(type: "int", nullable: false),
                     PRODUCT_ID = table.Column<int>(type: "int", maxLength: 10, nullable: false),
                     UPDATED_AT = table.Column<DateTime>(type: "datetime", maxLength: 100, nullable: false),
-                    PRODUCT_JSON = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false)
+                    PRODUCT_JSON = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -50,7 +50,7 @@ namespace Adimax.Infrastructure.Data.Migrations
                     DESCRIPTION = table.Column<string>(type: "varchar(400)", maxLength: 400, nullable: false),
                     PRICE = table.Column<decimal>(type: "decimal(18,0)", maxLength: 20, nullable: false),
                     CREATED = table.Column<DateTime>(type: "datetime", maxLength: 20, nullable: false),
-                    HasPendingLogUpdate = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                    HasPendingLogUpdate = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -78,10 +78,8 @@ namespace Adimax.Infrastructure.Data.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("DESCRIPTION");
 
-                    b.Property<string>("HasPendingLogUpdate")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar")
+                    b.Property<bool>("HasPendingLogUpdate")
+                        .HasColumnType("bit")
                         .HasColumnName("HasPendingLogUpdate");
 
                     b.Property<string>("Name")
@@ -131,7 +129,6 @@ namespace Adimax.Infrastructure.Data.Migrations
                         .HasColumnName("PRODUCT_ID");
 
                     b.Property<string>("ProductJson")
-                        .IsRequired()
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("PRODUCT_JSON");

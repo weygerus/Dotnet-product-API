@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Adimax.Domain;
-using Microsoft.AspNetCore.Mvc;
+﻿using Adimax.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Adimax.Infrastructure.Data.DTO;
 
 namespace Adimax.Infrastructure.Data.Contract.Interfaces

@@ -94,6 +94,9 @@ namespace Adimax_RestAPI.Controllers
             return Ok(newCategory);
         }
 
+        /// <summary>
+        /// CONSULTAR UMA CATEGORIA POR ID.
+        /// </summary>
         [HttpDelete]
         [Route("api/DeleteCategory/{Id}")]
         public async Task<Category> DeleteCategoryAsync(int Id)

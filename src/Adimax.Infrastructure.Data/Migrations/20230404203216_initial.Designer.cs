@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Adimax.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230403184036_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20230404203216_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,10 +81,8 @@ namespace Adimax.Infrastructure.Data.Migrations
                         .HasColumnType("varchar")
                         .HasColumnName("DESCRIPTION");
 
-                    b.Property<string>("HasPendingLogUpdate")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar")
+                    b.Property<bool>("HasPendingLogUpdate")
+                        .HasColumnType("bit")
                         .HasColumnName("HasPendingLogUpdate");
 
                     b.Property<string>("Name")
@@ -134,7 +132,6 @@ namespace Adimax.Infrastructure.Data.Migrations
                         .HasColumnName("PRODUCT_ID");
 
                     b.Property<string>("ProductJson")
-                        .IsRequired()
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("PRODUCT_JSON");
