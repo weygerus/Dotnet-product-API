@@ -1,4 +1,0 @@
-﻿[*.cs]
-
-# CS0006: Arquivo de origem "C:\dev\Github\Desafio_API\Adimax.RestAPI\src\Adimax.Infrastructure.Data\obj\Debug\net6.0\ref\Adimax.Infrastructure.Data.dll" não pode ser encontrado
-dotnet_diagnostic.CS0006.severity = warning
