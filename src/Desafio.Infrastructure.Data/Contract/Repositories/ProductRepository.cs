@@ -32,30 +32,35 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
             }) ;
         }
 
-
-
-
         public async Task<Product> GetById(int Id)
         {
             return await _dbContext.Products.FindAsync(Id);
         }
 
-
-
-
         // -->Metodos ALTERACAO
         public ProductResponseDTO AddAsync(Product product)
         {
-            _dbContext.Products.Add(product);
-            _dbContext.SaveChanges();
-            _dbContext.Dispose();
+            try
+            {
+                _dbContext.Products.Add(product);
+                _dbContext.SaveChanges();
+                _dbContext.Dispose();
 
-            var res = new ProductResponseDTO();
-            return res;
+                var res = new ProductResponseDTO();
+                return res;
+            }
+            catch (Exception productInsertException)
+            {
+                throw productInsertException;
+            }
         }
 
-       
+        public async Task<Product> GetLastInsert()
+        {
+            var lastInsert = _dbContext.Products.FirstOrDefault();
 
+            return lastInsert;
+        }
 
         public void UpdateItem(Product oldProduct)
         {
@@ -63,10 +68,6 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
             _dbContext.SaveChanges();
             _dbContext.Dispose();
         }
-
-     
-
-
 
         public async Task<Product> DeleteItem(Product product)
         { 

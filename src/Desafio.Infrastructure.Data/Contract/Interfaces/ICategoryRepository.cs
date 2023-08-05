@@ -19,5 +19,7 @@ namespace Desafio.Infrastructure.Data.Contract.Interfaces
         public void UpdateItem(Category category);
 
         public Task<Category> DeleteItem(Category category);
+
+        public Task<List<string>> GetCategoryNamesListByIdsAsync(List<Category> CategoryList);
     }
 }

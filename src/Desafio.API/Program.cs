@@ -14,9 +14,11 @@ builder.Services.AddDbContext<DatabaseContext>();
 builder.Services.AddMvc();
 
 // Injeção de dependencias.
-builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<IProductLogRepository, ProductLogRepository>();
+builder.Services.AddTransient<IProductRepository, ProductRepository>();
+
+builder.Services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
 
 // Configuração do Swagger.
 builder.Services.AddEndpointsApiExplorer();
@@ -47,7 +49,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddHangfire(configuration => configuration.UseRecommendedSerializerSettings().UseSqlServerStorage("Server=localhost\\SQLEXPRESS;Database=ADIMAX_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False"));
 builder.Services.AddHangfireServer();
 
-var app = builder.Build();
+    var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

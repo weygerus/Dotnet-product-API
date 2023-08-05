@@ -7,9 +7,8 @@ namespace Desafio.Infrastructure.Data.Contract.Interfaces
     {
         // --> METODOS QUERY
         public Task<IEnumerable<object>> GetAll();
-
         public Task<Product> GetById(int id);
-
+        public Task<Product> GetLastInsert();
 
         // --> METODOS COMMAND
         public ProductResponseDTO AddAsync(Product product);

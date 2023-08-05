@@ -4,6 +4,8 @@ namespace Desafio.Domain
 {
     public class ProductCategory
     {
+        public int ProductCategoryId { get; set; }
+
         [ForeignKey("ProductId")]
         public int ProductId { get; set; }
 

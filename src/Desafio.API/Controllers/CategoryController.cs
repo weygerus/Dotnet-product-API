@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Desafio.Infrastructure.Data.Contract.Interfaces;
+using Desafio.Infrastructure.Data.DTO;
+using Desafio.Infrastructure.Data.DTO.Categories;
 using Desafio.Domain;
 using Dapper;
 using System.Data;
@@ -93,13 +95,18 @@ namespace Desafio.API.Controllers
         {
             if (category == null)
             {
-                throw new Exception("Nao encontrada");
+                throw new Exception("Dados da categoria não encontrados");
             }
 
             _categoryRepository.AddAsync(category);
 
-            var response = new Category();
-            return response;
+            var CategoryInsertSucessResponse = new CategoryResponseDTO()
+            {
+                Id = category.Id,
+                Message = "Categoria cadastrada com sucesso!"
+            };
+
+            return CategoryInsertSucessResponse;
         }
 
         /// <summary>
@@ -116,6 +123,13 @@ namespace Desafio.API.Controllers
                 return BadRequest();
             }
 
+            if (newCategory.ProductCategories is null)
+            {
+                var nullCategoryResponse = "Produto sem categoria cadastrada.";
+
+                return nullCategoryResponse;
+            }
+
             var oldCategory = await _categoryRepository.GetById(Id);
 
             if (oldCategory == null)
@@ -129,7 +143,13 @@ namespace Desafio.API.Controllers
 
             _categoryRepository.UpdateItem(oldCategory);
 
-            return Ok(newCategory);
+            var categoryUpdateSucessResponse = new CategoryUpdateSucessResponseDTO()
+            {
+                Id = newCategory.Id,
+                Message = "Categoria atualizada com sucesso!"
+            };
+
+            return categoryUpdateSucessResponse;
         }
 
         /// <summary>

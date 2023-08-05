@@ -1,16 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Desafio.Domain;
 using Desafio.Infrastructure.Data.DTO;
+using Desafio.Infrastructure.Data.Contract.Repositories;
 using Desafio.Infrastructure.Data.Contract.Interfaces;
+using Desafio.Infrastructure.Data.DTO.ProductResponses;
 
 namespace Desafio.API.Controllers
 {
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
-        public ProductController(IProductRepository productRepository)
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IProductCategoryRepository _productCategoryRepository;
+
+        public ProductController(
+            IProductRepository productRepository,
+            ICategoryRepository categoryRepository,
+            IProductCategoryRepository productCategoryRepository)
         {
             _productRepository = productRepository;
+            _categoryRepository = categoryRepository;
+            _productCategoryRepository = productCategoryRepository;
         }
 
         /// <summary>
@@ -40,6 +50,14 @@ namespace Desafio.API.Controllers
             return Ok(products);
         }
 
+        [HttpGet]
+        [Route("api/GetLastInsert")]
+        public async Task<ActionResult> GetLastInsert()
+        {
+            var product = await _productRepository.GetLastInsert();
+            return Ok(product);
+        }
+
         /// <summary>
         /// ADICIONAR UM PRODUTO.
         /// </summary>
@@ -47,15 +65,39 @@ namespace Desafio.API.Controllers
         [Route("api/InsertProduct")]
         public async Task<object> AddProductAsync([FromBody]Product product)
         {
-            if (product == null)
+            try
             {
-                return NoContent();
+                if (product is null)
+                {
+                    return NoContent();
+                }
+
+                if (product.ProductCategories.Count == 0)
+                {
+                    var nullCategoryResponse = "É necessária uma categoria para cadastrar o produto!.";
+
+                    return nullCategoryResponse;
+                }
+
+                _productRepository.AddAsync(product);
+
+                List<int> categoryIds = product.ProductCategories.Select(pc => pc.CategoryId).ToList();
+                var lastProductInsert = this.GetLastInsert();
+
+                var CategoryIdsList = await _productCategoryRepository.GetProductCategoryByCategoryId(categoryIds , lastProductInsert.Id);
+
+                var productInsertSucessResponse = new ProductResponseDTO()
+                {
+                    Id = product.Id,
+                    Message = "Produto cadastrado com sucesso!"
+                };
+
+                return productInsertSucessResponse;
             }
-
-            _productRepository.AddAsync(product);
-
-            var response = new ProductResponseDTO();
-            return response;
+            catch (Exception addProductException)
+            {
+                throw addProductException;
+            }
         }
 
         /// <summary>
@@ -87,7 +129,13 @@ namespace Desafio.API.Controllers
 
             _productRepository.UpdateItem(oldProduct);
 
-            return Ok(newProduct);
+            var UpdateProductSucessResponsee = new ProductUpdateSucessResponseDTO()
+            {
+                Id = newProduct.Id,
+                Message = "Produto atualizado com sucesso!"
+            };
+
+            return UpdateProductSucessResponsee;
         }
 
         /// <summary>
@@ -95,7 +143,7 @@ namespace Desafio.API.Controllers
         /// </summary>
         [HttpDelete]
         [Route("api/DeleteProduct/{Id}")]
-        public async Task<Product> DeleteProductAsync(int Id)
+        public async Task<ProductDeleteSucessResponseDTO> DeleteProductAsync(int Id)
         {
             var product = await _productRepository.GetById(Id); 
            
@@ -104,7 +152,14 @@ namespace Desafio.API.Controllers
                 throw new Exception("Nao encontrado");
             }
                 await _productRepository.DeleteItem(product);
-                return product;
+
+            var deleteProductDeleteSucessResponse = new ProductDeleteSucessResponseDTO()
+            {
+                Id = product.Id,
+                Message = "Produto deletado com sucesso!"
+            };
+
+            return deleteProductDeleteSucessResponse;
         }
     }
 }

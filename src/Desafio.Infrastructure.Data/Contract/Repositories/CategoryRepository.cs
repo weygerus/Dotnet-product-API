@@ -9,7 +9,9 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
     public class CategoryRepository : ICategoryRepository
     {
         private readonly DatabaseContext _dbContext;
-        public CategoryRepository(DatabaseContext dbContext)
+        public CategoryRepository(
+            DatabaseContext dbContext
+            )
         {
             _dbContext = dbContext;
         }
@@ -33,6 +35,20 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
            // return await _dbContext.Categories.ToListAsync();
         }
 
+        public async Task<List<string>> GetCategoryNamesListByIdsAsync(List<Category> CategoryList)
+        {
+            var categoryNameList = new List<string>();
+
+            foreach (var categoryName in CategoryList)
+            {
+                var categoryObject = await _dbContext.Categories.FindAsync(categoryName);
+
+                categoryNameList.Add(categoryObject.Name);
+            }
+
+            return categoryNameList;
+        }
+
         public async Task<Category> GetById(int Id)
         {
             return await _dbContext.Categories.FindAsync(Id);
@@ -49,7 +65,6 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
             //    c.CreatedAt,
             //    c.UpdateAt 
             //});
-           
         }
 
         // -->Metodos ALTERACAO
