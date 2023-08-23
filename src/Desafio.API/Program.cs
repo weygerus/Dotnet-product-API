@@ -17,7 +17,6 @@ builder.Services.AddMvc();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<IProductLogRepository, ProductLogRepository>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
-
 builder.Services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
 
 // Configuração do Swagger.
@@ -46,30 +45,38 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Inicialização do Hangfire.
-builder.Services.AddHangfire(configuration => configuration.UseRecommendedSerializerSettings().UseSqlServerStorage("Server=localhost\\SQLEXPRESS;Database=ADIMAX_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False"));
-builder.Services.AddHangfireServer();
-
+try
+{
+    builder.Services.AddHangfire(configuration => configuration.UseRecommendedSerializerSettings().UseSqlServerStorage("Server=localhost\\SQLEXPRESS;Database=ADIMAX_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False"));
+    builder.Services.AddHangfireServer();
+    
     var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Desafio Adimax API");
-    });
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Desafio Adimax API");
+        });
 
-    app.UseRouting();
-    app.UseHangfireDashboard();
+        app.UseRouting();
+        app.UseHangfireDashboard();
 
-    RecurringJob.AddOrUpdate<HangfireService>(x => x.PopulateProductLogTableJob(), Cron.Daily);
+        RecurringJob.AddOrUpdate<HangfireService>(x => x.PopulateProductLogTableJob(), Cron.Daily);
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+    }
+}
+catch (Exception buildErrorException)
+{
+    throw buildErrorException;
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

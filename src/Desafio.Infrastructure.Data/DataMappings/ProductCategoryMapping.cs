@@ -12,9 +12,9 @@ namespace Desafio.Infrastructure.Data.DataMappings
             builder.ToTable("PRODUCT_CATEGORY")
                    .HasKey(pc => new {pc.ProductId, pc.CategoryId});
 
-            builder.Property('ProductCategoryId')
-                .HasColumnName('ProductCategoryId')
-                .UseIdentityColumn(pk => new pk.ProductCategoryId);
+            builder.Property("ProductCategoryId")
+                .HasColumnName("PRODUCT_CATEGORY_ID")
+                .UseIdentityColumn();
 
             builder.Property(p => p.ProductId)
                    .HasColumnName("PRODUCT_ID")

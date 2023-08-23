@@ -9,7 +9,8 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly DatabaseContext _dbContext;
-        public ProductRepository(DatabaseContext dbContext) 
+        public ProductRepository
+            (DatabaseContext dbContext) 
         {
             _dbContext = dbContext;
         }
@@ -47,19 +48,25 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
                 _dbContext.Dispose();
 
                 var res = new ProductResponseDTO();
+
+                if (res.Id < 0)
+                {
+                    throw new Exception("Não foi possivél cadastrar o produto!");
+                }
+
                 return res;
             }
-            catch (Exception productInsertException)
+            catch (Exception ex)
             {
-                throw productInsertException;
+                throw;
             }
         }
 
-        public async Task<Product> GetLastInsert()
+        public int GetLastInsert()
         {
             var lastInsert = _dbContext.Products.FirstOrDefault();
 
-            return lastInsert;
+            return lastInsert.Id;
         }
 
         public void UpdateItem(Product oldProduct)

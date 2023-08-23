@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Desafio.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20230514195801_creating-migration")]
-    partial class creatingmigration
+    [Migration("20230805030600_InitialMigratin")]
+    partial class InitialMigratin
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -112,6 +112,13 @@ namespace Desafio.Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("int")
                         .HasColumnName("CATEGORY_ID");
+
+                    b.Property<int>("ProductCategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("PRODUCT_CATEGORY_ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductCategoryId"));
 
                     b.HasKey("ProductId", "CategoryId");
 

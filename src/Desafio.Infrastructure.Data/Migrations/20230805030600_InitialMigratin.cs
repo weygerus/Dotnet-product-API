@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Desafio.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class creatingmigration : Migration
+    public partial class InitialMigratin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,7 +64,9 @@ namespace Desafio.Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     PRODUCT_ID = table.Column<int>(type: "int", maxLength: 100, nullable: false),
-                    CATEGORY_ID = table.Column<int>(type: "int", maxLength: 100, nullable: false)
+                    CATEGORY_ID = table.Column<int>(type: "int", maxLength: 100, nullable: false),
+                    PRODUCT_CATEGORY_ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
                 },
                 constraints: table =>
                 {

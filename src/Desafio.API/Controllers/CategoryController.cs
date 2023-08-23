@@ -23,6 +23,27 @@ namespace Desafio.API.Controllers
             _ConnectionString = Connection;
         }
 
+        public Category GetCategoryByName(Category category)
+        {
+            string connectionString = "Server=localhost\\SQLEXPRESS;Database=ADIMAX_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False";
+                
+            var paramName = category.Name;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var categoryResult = new Category();
+
+                var param = category.Name;
+
+                var sqlQuery = "SELECT * FROM CATEGORY WHERE Name = @Param";
+
+                categoryResult = connection.QueryFirstOrDefault<Category>(sqlQuery, new { Param = param });
+
+                return categoryResult;
+            }
+
+        }
+
         /// <summary>
         /// CONSULTAR UMA CATEGORIA POR ID.
         /// </summary>
@@ -91,22 +112,37 @@ namespace Desafio.API.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/InsertCategory")]
-        public async Task<object> AddCategoryAsync([FromBody]Category category)
+        public object AddCategoryAsync([FromBody]Category category)
         {
-            if (category == null)
-            {
-                throw new Exception("Dados da categoria não encontrados");
-            }
+                if (category == null)
+                {
+                    throw new Exception("Dados da categoria não encontrados");
+                }
 
-            _categoryRepository.AddAsync(category);
+                var categoryCompare = this.GetCategoryByName(category);
 
-            var CategoryInsertSucessResponse = new CategoryResponseDTO()
-            {
-                Id = category.Id,
-                Message = "Categoria cadastrada com sucesso!"
-            };
+                if (category.Name == categoryCompare.Name)
+                {
+                    var errorMessage = "Não foi possivél cadastrar a categoria: Nome já cadastrado no sistema!";
 
-            return CategoryInsertSucessResponse;
+                    var CategoryInsertErrorResponse = new CategoryResponseDTO()
+                    {
+                        Id = category.Id,
+                        Message = errorMessage
+                    };
+
+                    return CategoryInsertErrorResponse;
+                }
+
+                _categoryRepository.AddAsync(category);
+
+                var CategoryInsertSucessResponse = new CategoryResponseDTO()
+                {
+                    Id = category.Id,
+                    Message = "Categoria cadastrada com sucesso!"
+                };
+
+                return CategoryInsertSucessResponse;
         }
 
         /// <summary>

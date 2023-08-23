@@ -110,6 +110,13 @@ namespace Desafio.Infrastructure.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("CATEGORY_ID");
 
+                    b.Property<int>("ProductCategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("PRODUCT_CATEGORY_ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductCategoryId"));
+
                     b.HasKey("ProductId", "CategoryId");
 
                     b.HasIndex("CategoryId");

@@ -37,16 +37,17 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
 
         public async Task<List<string>> GetCategoryNamesListByIdsAsync(List<Category> CategoryList)
         {
-            var categoryNameList = new List<string>();
+            var categoryList = new List<ProductCategory>();
+
+            var stringlist = new List<string>();
 
             foreach (var categoryName in CategoryList)
             {
-                var categoryObject = await _dbContext.Categories.FindAsync(categoryName);
 
-                categoryNameList.Add(categoryObject.Name);
+               // categoryList = await _dbContext.Categories.Where(c => c.Na).ToList();
             }
 
-            return categoryNameList;
+            return stringlist;
         }
 
         public async Task<Category> GetById(int Id)

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Desafio.Domain;
 using Desafio.Infrastructure.Data.DTO;
-using Desafio.Infrastructure.Data.Contract.Repositories;
 using Desafio.Infrastructure.Data.Contract.Interfaces;
 using Desafio.Infrastructure.Data.DTO.ProductResponses;
+using Desafio.Infrastructure.Data;
 
 namespace Desafio.API.Controllers
 {
@@ -12,15 +12,18 @@ namespace Desafio.API.Controllers
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IProductCategoryRepository _productCategoryRepository;
+        private readonly DatabaseContext _dbContext;
 
         public ProductController(
             IProductRepository productRepository,
             ICategoryRepository categoryRepository,
-            IProductCategoryRepository productCategoryRepository)
+            IProductCategoryRepository productCategoryRepository,
+            DatabaseContext dbContext)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _productCategoryRepository = productCategoryRepository;
+            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -39,6 +42,7 @@ namespace Desafio.API.Controllers
             return Ok(product);
         }
 
+
         /// <summary>
         /// CONSULTAR TODOS OS PRODUTOS.
         /// </summary>
@@ -52,10 +56,10 @@ namespace Desafio.API.Controllers
 
         [HttpGet]
         [Route("api/GetLastInsert")]
-        public async Task<ActionResult> GetLastInsert()
+        public int GetLastInsert()
         {
-            var product = await _productRepository.GetLastInsert();
-            return Ok(product);
+            var product = _productRepository.GetLastInsert();
+            return product;
         }
 
         /// <summary>
@@ -81,10 +85,9 @@ namespace Desafio.API.Controllers
 
                 _productRepository.AddAsync(product);
 
-                List<int> categoryIds = product.ProductCategories.Select(pc => pc.CategoryId).ToList();
-                var lastProductInsert = this.GetLastInsert();
+                List<int> categoryIds = product.ProductCategories.Select(pc => pc.ProductId).ToList();
 
-                var CategoryIdsList = await _productCategoryRepository.GetProductCategoryByCategoryId(categoryIds , lastProductInsert.Id);
+                List<int> productCategoryIds = new List<int>();
 
                 var productInsertSucessResponse = new ProductResponseDTO()
                 {
@@ -107,6 +110,21 @@ namespace Desafio.API.Controllers
         [Route("api/UpdateProduct/{Id}")]
         public async Task<object> UpdateProductAsync(int Id, [FromBody] Product newProduct)
         {
+            var productCompare = this.GetProductById(Id);
+
+            if (productCompare.Id.ToString() == string.Empty)
+            {
+                var errorMessage = "Produto não encontrado no sistema!";
+
+                var productUpdateResponse = new ProductResponseDTO()
+                {
+                    Id = Id,
+                    Message = errorMessage
+                };
+
+                return productUpdateResponse;
+            }
+
             newProduct.Id = Id;
 
             if (newProduct == null || Id != newProduct.Id)
