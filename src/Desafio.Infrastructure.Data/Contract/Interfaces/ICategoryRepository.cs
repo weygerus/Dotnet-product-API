@@ -1,19 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
+﻿using Desafio.Domain;
 using Desafio.Infrastructure.Data.DTO;
-using Desafio.Domain;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Desafio.Infrastructure.Data.Contract.Interfaces
 {
     public interface ICategoryRepository : IRepositoryBase<Category>
     {
-        // --> METODOS QUERY
+        public Category GetCategoryByName(string category);
+
         public Task<IEnumerable<object>> GetAll();
 
         public Task<Category> GetById(int id);
 
-
-        // --> METODOS COMMAND
         public ProductResponseDTO AddAsync([FromBody]Category category);
 
         public void UpdateItem(Category category);

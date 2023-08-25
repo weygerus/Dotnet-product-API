@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Microsoft.AspNetCore.Http.Extensions;
 using System.Linq;
+using Desafio.API.Validations;
 
 namespace Desafio.API.Controllers
 {
@@ -15,38 +16,17 @@ namespace Desafio.API.Controllers
     {
         private readonly List<Category> CategoryList = new List<Category>();
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IConfiguration _ConnectionString;
+        private readonly CategoryValidations _CategoryValidations;
 
-        public CategoryController(ICategoryRepository categoryRepository, IConfiguration Connection)
+        public CategoryController(
+            CategoryValidations categoryValidations,
+            ICategoryRepository categoryRepository,
+            IConfiguration Connection)
         {
             _categoryRepository = categoryRepository;
-            _ConnectionString = Connection;
+            _CategoryValidations = categoryValidations;
         }
 
-        public Category GetCategoryByName(Category category)
-        {
-            string connectionString = "Server=localhost\\SQLEXPRESS;Database=ADIMAX_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False";
-                
-            var paramName = category.Name;
-
-            using (var connection = new SqlConnection(connectionString))
-            {
-                var categoryResult = new Category();
-
-                var param = category.Name;
-
-                var sqlQuery = "SELECT * FROM CATEGORY WHERE Name = @Param";
-
-                categoryResult = connection.QueryFirstOrDefault<Category>(sqlQuery, new { Param = param });
-
-                return categoryResult;
-            }
-
-        }
-
-        /// <summary>
-        /// CONSULTAR UMA CATEGORIA POR ID.
-        /// </summary>
         [HttpGet]
         [Route("api/GetCategory/{Id}")]
         public async Task<object> GetCategoryById(int Id)
@@ -85,9 +65,6 @@ namespace Desafio.API.Controllers
             return Ok(category);
         }
 
-        /// <summary>
-        /// CONSULTAR UMA CATEGORIA POR ID.
-        /// </summary>
         [HttpGet]
         [Route("api/GetAllCategories")]
         public async Task<object> GetCategoriesAsync()
@@ -106,32 +83,21 @@ namespace Desafio.API.Controllers
 
             return Ok(categories);
         }
-
-        /// <summary>
-        /// CONSULTAR UMA CATEGORIA POR ID.
-        /// </summary>
+  
         [HttpPost]
         [Route("api/InsertCategory")]
-        public object AddCategoryAsync([FromBody]Category category)
+        public IActionResult AddCategoryAsync([FromBody]Category category)
         {
-                if (category == null)
+                if (category is null)
                 {
-                    throw new Exception("Dados da categoria não encontrados");
+                    return BadRequest("Dados da categoria não encontrados");
                 }
 
-                var categoryCompare = this.GetCategoryByName(category);
+                var isAvaliable = _CategoryValidations.ValidateAvailability(category);
 
-                if (category.Name == categoryCompare.Name)
+                if (!isAvaliable)
                 {
-                    var errorMessage = "Não foi possivél cadastrar a categoria: Nome já cadastrado no sistema!";
-
-                    var CategoryInsertErrorResponse = new CategoryResponseDTO()
-                    {
-                        Id = category.Id,
-                        Message = errorMessage
-                    };
-
-                    return CategoryInsertErrorResponse;
+                    return BadRequest("Erro: Categoria não pode ser cadastrada! Nome não disponível");             
                 }
 
                 _categoryRepository.AddAsync(category);
@@ -142,12 +108,9 @@ namespace Desafio.API.Controllers
                     Message = "Categoria cadastrada com sucesso!"
                 };
 
-                return CategoryInsertSucessResponse;
+                return Ok(CategoryInsertSucessResponse);
         }
 
-        /// <summary>
-        /// CONSULTAR UMA CATEGORIA POR ID.
-        /// </summary>
         [HttpPut]
         [Route("api/UpdateCategory/{Id}")]
         public async Task<object> UpdateCategoryAsync(int Id, [FromBody]Category newCategory)
@@ -188,9 +151,6 @@ namespace Desafio.API.Controllers
             return categoryUpdateSucessResponse;
         }
 
-        /// <summary>
-        /// CONSULTAR UMA CATEGORIA POR ID.
-        /// </summary>
         [HttpDelete]
         [Route("api/DeleteCategory/{Id}")]
         public async Task<Category> DeleteCategoryAsync(int Id)

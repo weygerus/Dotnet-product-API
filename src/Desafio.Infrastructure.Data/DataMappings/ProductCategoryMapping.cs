@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 using Desafio.Domain;
 
 namespace Desafio.Infrastructure.Data.DataMappings
@@ -10,7 +9,7 @@ namespace Desafio.Infrastructure.Data.DataMappings
         public void Configure(EntityTypeBuilder<ProductCategory> builder)
         {
             builder.ToTable("PRODUCT_CATEGORY")
-                   .HasKey(pc => new {pc.ProductId, pc.CategoryId});
+                   .HasKey(pc => new { pc.ProductId, pc.CategoryId });
 
             builder.Property("ProductCategoryId")
                 .HasColumnName("PRODUCT_CATEGORY_ID")

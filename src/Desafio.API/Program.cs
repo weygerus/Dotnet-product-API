@@ -2,7 +2,6 @@ using Microsoft.OpenApi.Models;
 using Desafio.Infrastructure.Data;
 using Desafio.Infrastructure.Data.Contract.Interfaces;
 using Desafio.Infrastructure.Data.Contract.Repositories;
-
 using Hangfire;
 using Desafio.Infrastructure.Data.Jobs;
 
@@ -26,21 +25,20 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "Desafio",
-        Description = "slasla...",
-        TermsOfService = new Uri("https://www.google.com/"),
-        Contact = new OpenApiContact
-        {
-            Name = "sla",
-            Email = "sla",
-            Url = new Uri("https://www.google.com/")
-        },
-        License = new OpenApiLicense
-        {
-            Name = "sla",
-            Url = new Uri("https://www.google.com/")
-        }
-
+        Title = "Projeto desafio",
+        Description = "API de gerencimento de produtos"
+        // TermsOfService = new Uri("https://www.google.com/"),
+        // Contact = new OpenApiContact
+        // {
+        //     Name = "Gabriel",
+        //     Email = "gabrileao38@gmail.com",
+        //     Url = new Uri("https://www.google.com/")
+        // },
+        // License = new OpenApiLicense
+        // {
+        //     Name = "sla",
+        //     Url = new Uri("https://www.google.com/")
+        // }
     });
 });
 

@@ -1,13 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-using Desafio.Infrastructure.Data.Contract.Interfaces;
+﻿using Desafio.Infrastructure.Data.Contract.Interfaces;
 using Desafio.Infrastructure.Data.DTO;
 
 namespace Desafio.Infrastructure.Data.Contract.Repositories
 {
     public class RepositoryBase<TEntity> : IRepositoryBase<TEntity>, IAsyncDisposable where TEntity : class
     {
-        //-->Metodos QUERY
         public Task<IEnumerable<object>> GetAll()
         {
             throw new NotImplementedException();
@@ -18,7 +15,6 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
             throw new NotImplementedException();
         }
 
-        //-->Metodos COMMAND
         public ProductResponseDTO AddAsync(TEntity entity)
         {
             throw new NotImplementedException();

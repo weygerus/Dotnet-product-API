@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
 using Desafio.Domain;
 
 namespace Desafio.Infrastructure.Data.DataMappings

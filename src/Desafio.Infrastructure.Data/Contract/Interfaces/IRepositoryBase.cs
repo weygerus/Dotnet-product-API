@@ -1,9 +1,11 @@
-﻿using Desafio.Domain;
-using Desafio.Infrastructure.Data.DTO;
+﻿using Desafio.Infrastructure.Data.DTO;
 
 namespace Desafio.Infrastructure.Data.Contract.Interfaces
 {
-    // interface generica que recebe uma entidade (ex: category, product)
+    /// <summary>
+    /// interface generica que recebe uma entidade (ex: category, product)
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
     public interface IRepositoryBase<TEntity>
     {
         public Task<IEnumerable<object>> GetAll();

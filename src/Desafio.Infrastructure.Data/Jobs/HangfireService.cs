@@ -16,7 +16,7 @@ namespace Desafio.Infrastructure.Data.Jobs
         public void PopulateProductLogTableJob()
         {
             var ProductsForUpdate = _dbContext.Products.Where(p => p.HasPendingLogUpdate == true).ToList();
-            // if' s só podem ser contidos dentro dos metodos, não nos fluxo, pois um metodo só deve ter uma razaão para mudar.
+
             foreach (var product in ProductsForUpdate)
             {
                 product.HasPendingLogUpdate = false;

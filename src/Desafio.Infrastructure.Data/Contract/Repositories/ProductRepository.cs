@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-
 using Desafio.Infrastructure.Data.Contract.Interfaces;
 using Desafio.Infrastructure.Data.DTO;
 using Desafio.Domain;
@@ -9,13 +8,12 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly DatabaseContext _dbContext;
-        public ProductRepository
-            (DatabaseContext dbContext) 
+
+        public ProductRepository(DatabaseContext dbContext) 
         {
             _dbContext = dbContext;
         }
 
-        // -->Metodos QUERY
         public async Task<IEnumerable<object>> GetAll()
         {
             var products = await _dbContext.Products.Include(p => p.ProductCategories)
@@ -38,7 +36,6 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
             return await _dbContext.Products.FindAsync(Id);
         }
 
-        // -->Metodos ALTERACAO
         public ProductResponseDTO AddAsync(Product product)
         {
             try

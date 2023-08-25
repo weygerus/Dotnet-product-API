@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Desafio.Domain;
-
-namespace Desafio.Infrastructure.Data.DTO
+﻿namespace Desafio.Infrastructure.Data.DTO
 {
     public class ProductResponseDTO
     {
@@ -17,11 +10,11 @@ namespace Desafio.Infrastructure.Data.DTO
         /// <summary>
         /// Gets or Sets da propriedade Message.
         /// </summary>
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
          /// <summary>
          /// 
          /// </summary>
-        public List<string> ProductCategories { get; set; } 
+        public List<string>? ProductCategories { get; set; } 
     }
 }
