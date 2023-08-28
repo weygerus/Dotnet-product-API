@@ -9,6 +9,10 @@ namespace Desafio.Infrastructure.Data.Contract.Interfaces
 
         public Task<Product> GetById(int id);
 
+        public Task<Product> GetProductByName(string name);
+
+        public Task<string> GetNameProductById(int id);
+
         public int GetLastInsert();
 
         public ProductResponseDTO AddAsync(Product product);

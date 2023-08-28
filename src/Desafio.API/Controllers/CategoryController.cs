@@ -1,27 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Desafio.Infrastructure.Data.Contract.Interfaces;
 using Desafio.Infrastructure.Data.DTO;
-using Desafio.Infrastructure.Data.DTO.Categories;
 using Desafio.Domain;
-using Dapper;
-using System.Data;
-using System.Data.SqlClient;
-using Microsoft.AspNetCore.Http.Extensions;
-using System.Linq;
-using Desafio.API.Validations;
+using Desafio.Infrastructure.Data.Contract.Validations;
 
 namespace Desafio.API.Controllers
 {
     public class CategoryController : ControllerBase
     {
-        private readonly List<Category> CategoryList = new List<Category>();
         private readonly ICategoryRepository _categoryRepository;
-        private readonly CategoryValidations _CategoryValidations;
+        private readonly ICategoryValidations _CategoryValidations;
 
         public CategoryController(
-            CategoryValidations categoryValidations,
-            ICategoryRepository categoryRepository,
-            IConfiguration Connection)
+            ICategoryValidations categoryValidations,
+            ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
             _CategoryValidations = categoryValidations;
@@ -29,52 +21,25 @@ namespace Desafio.API.Controllers
 
         [HttpGet]
         [Route("api/GetCategory/{Id}")]
-        public async Task<object> GetCategoryById(int Id)
+        public async Task<IActionResult> GetCategoryById(int Id)
         {
-            string connectionString = "Server=localhost\\SQLEXPRESS;Database=ADIMAX_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False";
-            IDbConnection connection = new SqlConnection(connectionString);
+            var category = await _categoryRepository.GetById(Id);
 
-            string selectCategories = "SELECT * FROM CATEGORY WHERE Id = @id";
-            string selectProductsIdsOnThisCategory = @"
-                    SELECT pc.PRODUCT_ID
-                    FROM PRODUCT_CATEGORY pc
-                    INNER JOIN PRODUCT p ON p.ID = pc.PRODUCT_ID
-                    WHERE pc.CATEGORY_ID = @Id";
-
-            var param = new { id = Id };
-
-            Category category = connection.QueryFirstOrDefault<Category>(selectCategories, param);
-
-            if (category == null)
+            if (category.Id is 0)
             {
                 return NoContent();
             }
 
-            List<ProductCategory> products = connection.Query<ProductCategory>(selectProductsIdsOnThisCategory, param).ToList();
-
-            foreach (var productId in products)
-            {
-                List<ProductCategory> ids = new List<ProductCategory>();
-
-                ids.Add(productId);
-
-                category.ProductCategories = ids;
-            }
-
+            category.ProductCategories = null; // Evita execeção referencia ciclíca do objeto.
 
             return Ok(category);
         }
 
         [HttpGet]
         [Route("api/GetAllCategories")]
-        public async Task<object> GetCategoriesAsync()
+        public async Task<IActionResult> GetCategoriesAsync()
         {
-            string connectionString = "Server=localhost\\SQLEXPRESS;Database=ADIMAX_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False";
-            IDbConnection connection = new SqlConnection(connectionString);
-
-            string selectCategories = "SELECT * FROM CATEGORY";
-
-            var categories = connection.QueryFirstOrDefault<Category>(selectCategories);
+            var categories = await _categoryRepository.GetAll();
 
             if (categories == null)
             {
@@ -86,83 +51,85 @@ namespace Desafio.API.Controllers
   
         [HttpPost]
         [Route("api/InsertCategory")]
-        public IActionResult AddCategoryAsync([FromBody]Category category)
+        public async Task<IActionResult> AddCategoryAsync([FromBody]Category category)
         {
-                if (category is null)
-                {
-                    return BadRequest("Dados da categoria não encontrados");
-                }
+            if (category is null)
+            {
+                return BadRequest("Dados da categoria não encontrados");
+            }
 
-                var isAvaliable = _CategoryValidations.ValidateAvailability(category);
+            var validationResponse = await _CategoryValidations.ValidateAvailability(category);
 
-                if (!isAvaliable)
-                {
-                    return BadRequest("Erro: Categoria não pode ser cadastrada! Nome não disponível");             
-                }
+            if (!validationResponse.IsAvailable)
+            {
+                return BadRequest($"Erro ao cadastrar categoria! {validationResponse.Message}");             
+            }
 
-                _categoryRepository.AddAsync(category);
+            _categoryRepository.AddAsync(category);
 
-                var CategoryInsertSucessResponse = new CategoryResponseDTO()
-                {
-                    Id = category.Id,
-                    Message = "Categoria cadastrada com sucesso!"
-                };
+            var categoryInsertSucessResponse = new CategoryResponseDTO()
+            {
+                Id = category.Id,
+                Message = "Categoria cadastrada com sucesso!"
+            };
 
-                return Ok(CategoryInsertSucessResponse);
+            return Ok(categoryInsertSucessResponse);
         }
 
         [HttpPut]
         [Route("api/UpdateCategory/{Id}")]
-        public async Task<object> UpdateCategoryAsync(int Id, [FromBody]Category newCategory)
+        public async Task<IActionResult> UpdateCategoryAsync(int Id, [FromBody]Category UpdatedCategory)
         {
-            newCategory.Id = Id;
+            UpdatedCategory.Id = Id;
             
-            if (newCategory == null || Id != newCategory.Id)
+            if (UpdatedCategory is null)
             {
                 return BadRequest();
-            }
-
-            if (newCategory.ProductCategories is null)
-            {
-                var nullCategoryResponse = "Produto sem categoria cadastrada.";
-
-                return nullCategoryResponse;
             }
 
             var oldCategory = await _categoryRepository.GetById(Id);
 
             if (oldCategory == null)
             {
-                return NotFound();
+                return BadRequest("Erro: Categoria informada não existe!");
             }
+
             //-->Substituir por foreach
-            oldCategory.Name = newCategory.Name;
-            oldCategory.Description = newCategory.Description;
-            oldCategory.UpdateAt = newCategory.UpdateAt;
+            oldCategory.Name = UpdatedCategory.Name;
+            oldCategory.Description = UpdatedCategory.Description;
+            oldCategory.UpdateAt = UpdatedCategory.UpdateAt;
 
             _categoryRepository.UpdateItem(oldCategory);
 
-            var categoryUpdateSucessResponse = new CategoryUpdateSucessResponseDTO()
+            var categoryUpdateSucessResponse = new CategoryResponseDTO()
             {
-                Id = newCategory.Id,
+                Id = UpdatedCategory.Id,
                 Message = "Categoria atualizada com sucesso!"
             };
 
-            return categoryUpdateSucessResponse;
+            return Ok(categoryUpdateSucessResponse);
         }
 
         [HttpDelete]
         [Route("api/DeleteCategory/{Id}")]
-        public async Task<Category> DeleteCategoryAsync(int Id)
+        public async Task<IActionResult> DeleteCategoryAsync(int Id)
         {
             var category = await _categoryRepository.GetById(Id);
 
-            if (category == null)
+            if (category is null)
             {
-                throw new Exception("Nao encontrada");
+                return NoContent();
             }
-                await _categoryRepository.DeleteItem(category);
-                return category;
+
+            await _categoryRepository.DeleteItem(category);
+
+            var categoryDeleteSucessResponse = new CategoryResponseDTO()
+            {
+                Id = category.Id,
+                Message = "Categoria excluida com sucesso!"
+            };
+
+            return Ok(categoryDeleteSucessResponse);
         }
     }
 }

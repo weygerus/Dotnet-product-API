@@ -2,8 +2,8 @@
 using Desafio.Domain;
 using Desafio.Infrastructure.Data.DTO;
 using Desafio.Infrastructure.Data.Contract.Interfaces;
-using Desafio.Infrastructure.Data.DTO.ProductResponses;
 using Desafio.Infrastructure.Data;
+using Desafio.Infrastructure.Data.Contract.Validations;
 
 namespace Desafio.API.Controllers
 {
@@ -12,100 +12,66 @@ namespace Desafio.API.Controllers
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
         private readonly IProductCategoryRepository _productCategoryRepository;
-        private readonly DatabaseContext _dbContext;
+
+        private readonly IProductValidations _ProductValidations;
 
         public ProductController(
+            IProductValidations productValidations,
             IProductRepository productRepository,
             ICategoryRepository categoryRepository,
-            IProductCategoryRepository productCategoryRepository,
-            DatabaseContext dbContext)
+            IProductCategoryRepository productCategoryRepository)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _productCategoryRepository = productCategoryRepository;
-            _dbContext = dbContext;
+            _ProductValidations = productValidations;
         }
 
-        /// <summary>
-        /// CONSULTAR UM PRODUTO POR ID.
-        /// </summary>
         [HttpGet]
         [Route("api/GetProduct/{Id}")]
-        public async Task<object> GetProductById(int Id)
+        public async Task<IActionResult> GetProductById(int Id)
         {
             var product = await _productRepository.GetById(Id);
 
             if(product == null)
             {
-                return NotFound();
+                return NoContent();
             }
+
             return Ok(product);
         }
 
-
-        /// <summary>
-        /// CONSULTAR TODOS OS PRODUTOS.
-        /// </summary>
         [HttpGet]
         [Route("api/GetAllProducts")]
-        public async Task<ActionResult> GetProductsAsync()
+        public async Task<IActionResult> GetProductsAsync()
         {
             var products = await _productRepository.GetAll();
+
             return Ok(products);
         }
 
-        [HttpGet]
-        [Route("api/GetLastInsert")]
-        public int GetLastInsert()
-        {
-            var product = _productRepository.GetLastInsert();
-            return product;
-        }
-
-        /// <summary>
-        /// ADICIONAR UM PRODUTO.
-        /// </summary>
         [HttpPost]
         [Route("api/InsertProduct")]
         public async Task<object> AddProductAsync([FromBody]Product product)
         {
-            try
+            var validationResponse = await _ProductValidations.ValidateAvailability(product);
+
+            if (!validationResponse.IsAvailable)
             {
-                if (product is null)
-                {
-                    return NoContent();
-                }
-
-                if (product.ProductCategories.Count == 0)
-                {
-                    var nullCategoryResponse = "É necessária uma categoria para cadastrar o produto!.";
-
-                    return nullCategoryResponse;
-                }
-
-                _productRepository.AddAsync(product);
-
-                List<int> categoryIds = product.ProductCategories.Select(pc => pc.ProductId).ToList();
-
-                List<int> productCategoryIds = new List<int>();
-
-                var productInsertSucessResponse = new ProductResponseDTO()
-                {
-                    Id = product.Id,
-                    Message = "Produto cadastrado com sucesso!"
-                };
-
-                return productInsertSucessResponse;
+                return BadRequest($"Erro ao cadastrar: {validationResponse.Message}");
             }
-            catch (Exception addProductException)
+
+            _productRepository.AddAsync(product);
+
+            var productInsertSucessResponse = new ProductResponseDTO()
             {
-                throw addProductException;
-            }
+                Id = product.Id,
+                Message = "Produto cadastrado com sucesso!"
+            };
+
+            return Ok(productInsertSucessResponse);
         }
 
-        /// <summary>
-        /// ATUALIZAR UM PRODUTO.
-        /// </summary>
         [HttpPut]
         [Route("api/UpdateProduct/{Id}")]
         public async Task<object> UpdateProductAsync(int Id, [FromBody] Product newProduct)
@@ -147,7 +113,7 @@ namespace Desafio.API.Controllers
 
             _productRepository.UpdateItem(oldProduct);
 
-            var UpdateProductSucessResponsee = new ProductUpdateSucessResponseDTO()
+            var UpdateProductSucessResponsee = new ProductResponseDTO()
             {
                 Id = newProduct.Id,
                 Message = "Produto atualizado com sucesso!"
@@ -156,28 +122,26 @@ namespace Desafio.API.Controllers
             return UpdateProductSucessResponsee;
         }
 
-        /// <summary>
-        /// DELETAR UM PRODUTO.
-        /// </summary>
         [HttpDelete]
         [Route("api/DeleteProduct/{Id}")]
-        public async Task<ProductDeleteSucessResponseDTO> DeleteProductAsync(int Id)
+        public async Task<IActionResult> DeleteProductAsync(int Id)
         {
             var product = await _productRepository.GetById(Id); 
            
-            if (product == null)
+            if (product is null)
             {
-                throw new Exception("Nao encontrado");
+                return NoContent();
             }
-                await _productRepository.DeleteItem(product);
 
-            var deleteProductDeleteSucessResponse = new ProductDeleteSucessResponseDTO()
+            await _productRepository.DeleteItem(product);
+
+            var DeleteSucessResponse = new ProductResponseDTO()
             {
                 Id = product.Id,
                 Message = "Produto deletado com sucesso!"
             };
 
-            return deleteProductDeleteSucessResponse;
+            return Ok(DeleteSucessResponse);
         }
     }
 }

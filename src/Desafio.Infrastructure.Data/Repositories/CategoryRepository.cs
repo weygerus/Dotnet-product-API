@@ -10,31 +10,13 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
+        private readonly IProductRepository _ProductRepository;
         private readonly DatabaseContext _dbContext;
-        private readonly IConfiguration _ConnectionString;
 
-        public CategoryRepository(DatabaseContext dbContext, IConfiguration connectionString)
+        public CategoryRepository(DatabaseContext dbContext, IProductRepository productRepository)
         {
             _dbContext = dbContext;
-            _ConnectionString = connectionString;
-        }
-
-        public async Task<IEnumerable<object>> GetAll()
-        {
-            var categories = await _dbContext.Categories.Include(c => c.ProductCategories)
-                                                        .ThenInclude(pc => pc.ProductIn)
-                                                        .ToListAsync();
-
-            return categories.Select(c => new
-            {
-                c.Id,
-                c.Name,
-                c.Description,
-                Products = c.ProductCategories.Select(pc => pc.ProductIn.Name),
-                c.CreatedAt,
-                c.UpdateAt
-            });
-           // return await _dbContext.Categories.ToListAsync();
+            _ProductRepository = productRepository;
         }
 
         public async Task<List<string>> GetCategoryNamesListByIdsAsync(List<Category> CategoryList)
@@ -52,7 +34,7 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
             return stringlist;
         }
 
-        public Category GetCategoryByName(string category)
+        public async Task<Category> GetCategoryByName(string category)
         {
             string connectionString = "Server=localhost\\SQLEXPRESS;Database=ADIMAX_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False";
 
@@ -70,22 +52,49 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
             }
         }
 
+        public async Task<IEnumerable<object>> GetAll()
+        {
+            var categories = await _dbContext.Categories.Include(c => c.ProductCategories)
+                                                        .ThenInclude(pc => pc.ProductIn)
+                                                        .ToListAsync();
+
+            return categories.Select(c => new
+            {
+                c.Id,
+                c.Name,
+                c.Description,
+                Products = c.ProductCategories.Select(pc => pc.ProductIn.Name),
+                c.CreatedAt,
+                c.UpdateAt
+            });
+        }
+
+
         public async Task<Category> GetById(int Id)
         {
-            return await _dbContext.Categories.FindAsync(Id);
+            var category = await _dbContext.Categories.FindAsync(Id);
 
-            //var categoryWithProducts = await _dbContext.Categories.Include(c => c.ProductCategories)
-            //                                                      .ThenInclude(pc => pc.ProductIn);
-                                                                
-            //return category.Select(c => new
-            //{
-            //    c.Id,
-            //    c.Name,
-            //    c.Description,
-            //    c.Products = c.ProductCategories.Select(c => c.ProductIn.Name),
-            //    c.CreatedAt,
-            //    c.UpdateAt 
-            //});
+            if (category is null)
+            {
+                var errorCategory = new Category();
+
+                return errorCategory;
+            }
+
+            var productCategories = _dbContext.ProductCategories.Where(pc => pc.CategoryId == Id).ToList();
+
+            var productNamesIntoCategoryList = new List<string>();
+
+            foreach (var productCategory in productCategories)
+            {
+                var productId = productCategory.ProductId;
+
+                productNamesIntoCategoryList.Add(await _ProductRepository.GetNameProductById(productId));
+            }
+
+            category.ProductsOnCategory = productNamesIntoCategoryList;
+
+            return category;
         }
 
         public ProductResponseDTO AddAsync(Category category)

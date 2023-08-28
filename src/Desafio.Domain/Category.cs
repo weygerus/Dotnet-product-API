@@ -1,4 +1,7 @@
-﻿namespace Desafio.Domain
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
+namespace Desafio.Domain
 {
     public class Category
     {
@@ -18,9 +21,16 @@
         public string Description { get; set; }
 
         /// <summary>
-        /// Gets or Sets dos produtos.
+        /// Gets or Sets da relação entre categorias/produtos.
         /// </summary>
-        public ICollection<ProductCategory> ProductCategories { get; set; }
+        [JsonIgnore]
+        public ICollection<ProductCategory>? ProductCategories { get; set; }
+
+        /// <summary>
+        /// Gets or Sets dos produtos contidos na categoria.
+        /// </summary>
+        [NotMapped]
+        public List<string>? ProductsOnCategory { get; set; }
 
         /// <summary>
         /// Gets or Sets da criação.

@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Desafio.Infrastructure.Data.Contract.Interfaces;
 using Desafio.Infrastructure.Data.DTO;
+using System.Data.SqlClient;
 using Desafio.Domain;
+using Dapper;
 
 namespace Desafio.Infrastructure.Data.Contract.Repositories
 {
@@ -34,6 +36,38 @@ namespace Desafio.Infrastructure.Data.Contract.Repositories
         public async Task<Product> GetById(int Id)
         {
             return await _dbContext.Products.FindAsync(Id);
+        }
+
+        public async Task<Product> GetProductByName(string product)
+        {
+            string connectionString = "Server=localhost\\SQLEXPRESS;Database=ADIMAX_API;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False";
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var productResult = new Product();
+
+                var param = product;
+
+                var sqlQuery = "SELECT * FROM CATEGORY WHERE Name = @Param";
+
+                productResult = connection.QueryFirstOrDefault<Product>(sqlQuery, new { Param = param });
+
+                return productResult;
+            }
+        }
+
+        public async Task<string> GetNameProductById(int id)
+        {
+            var product = await _dbContext.Products.FindAsync(id);
+
+            if (product is null)
+            {
+                return string.Empty;
+            }
+
+            var productName = product.Name;
+
+            return productName;
         }
 
         public ProductResponseDTO AddAsync(Product product)

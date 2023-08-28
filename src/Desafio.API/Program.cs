@@ -1,7 +1,9 @@
 using Microsoft.OpenApi.Models;
 using Desafio.Infrastructure.Data;
+using Desafio.Infrastructure.Data.Validations;
 using Desafio.Infrastructure.Data.Contract.Interfaces;
 using Desafio.Infrastructure.Data.Contract.Repositories;
+using Desafio.Infrastructure.Data.Contract.Validations;
 using Hangfire;
 using Desafio.Infrastructure.Data.Jobs;
 
@@ -17,6 +19,9 @@ builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<IProductLogRepository, ProductLogRepository>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
+
+builder.Services.AddTransient<ICategoryValidations, CategoryValidations>();
+builder.Services.AddTransient<IProductValidations, ProductValidations>();
 
 // Configuração do Swagger.
 builder.Services.AddEndpointsApiExplorer();

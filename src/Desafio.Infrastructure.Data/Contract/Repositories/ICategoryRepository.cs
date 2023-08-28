@@ -6,7 +6,7 @@ namespace Desafio.Infrastructure.Data.Contract.Interfaces
 {
     public interface ICategoryRepository : IRepositoryBase<Category>
     {
-        public Category GetCategoryByName(string category);
+        public Task<Category> GetCategoryByName(string category);
 
         public Task<IEnumerable<object>> GetAll();
 
