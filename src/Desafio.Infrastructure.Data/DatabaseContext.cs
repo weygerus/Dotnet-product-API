@@ -26,7 +26,7 @@ namespace Desafio.Infrastructure.Data
         // Referencia DataMappings
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=.\\SQLEXPRESS;Initial Catalog=ADIMAX_API;trusted_Connection=true;TrustServerCertificate=True;Encrypt=False", b => b.MigrationsAssembly("Desafio.Infrastructure.Data"));
+            optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=ADIMAX_API;trusted_Connection=true;TrustServerCertificate=True;Encrypt=False", b => b.MigrationsAssembly("Desafio.Infrastructure.Data"));
         }
     }
 }
